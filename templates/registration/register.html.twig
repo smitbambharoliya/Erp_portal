@@ -1,0 +1,236 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register — ERP Portal{% endblock %}
+
+{% block stylesheets %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #0f172a;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    body::before {
+        content: '';
+        position: fixed; inset: 0;
+        background: radial-gradient(ellipse 70% 50% at 30% 20%, rgba(99,102,241,0.18) 0%, transparent 60%),
+                    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(14,165,233,0.12) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .register-wrapper {
+        width: 100%;
+        max-width: 460px;
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-logo {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+    .register-logo .logo-icon {
+        width: 54px; height: 54px;
+        background: linear-gradient(135deg, #6366f1, #0ea5e9);
+        border-radius: 16px;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: 0 0 30px rgba(99,102,241,0.4);
+        margin-bottom: 12px;
+    }
+    .register-logo h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; }
+    .register-logo p  { color: #94a3b8; font-size: 0.85rem; margin-top: 4px; }
+
+    .register-card {
+        background: rgba(30,41,59,0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(99,102,241,0.2);
+        border-radius: 20px;
+        padding: 36px 32px;
+    }
+
+    .form-group { margin-bottom: 20px; }
+
+    .form-group label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-group input[type="email"],
+    .form-group input[type="password"],
+    .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(15,23,42,0.8);
+        border: 1px solid rgba(99,102,241,0.25);
+        border-radius: 10px;
+        color: #f8fafc;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    .form-group select option { background: #1e293b; color: #f8fafc; }
+
+    .checkbox-group {
+        display: flex; align-items: center; gap: 10px;
+        margin-bottom: 24px;
+    }
+    .checkbox-group input[type="checkbox"] {
+        width: 18px; height: 18px;
+        accent-color: #6366f1;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .checkbox-group label {
+        font-size: 0.83rem;
+        color: #94a3b8;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .form-errors {
+        background: rgba(239,68,68,0.1);
+        border: 1px solid rgba(239,68,68,0.3);
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        color: #f87171;
+        font-size: 0.83rem;
+    }
+
+    .btn-register {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        letter-spacing: 0.3px;
+    }
+    .btn-register:hover {
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        box-shadow: 0 8px 25px rgba(99,102,241,0.4);
+        transform: translateY(-1px);
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.83rem;
+        color: #64748b;
+    }
+    .login-link a { color: #818cf8; text-decoration: none; font-weight: 500; }
+    .login-link a:hover { color: #a5b4fc; }
+
+    .role-badges {
+        display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .role-badge {
+        font-size: 0.72rem; padding: 3px 10px;
+        border-radius: 20px; font-weight: 500;
+    }
+    .badge-admin    { background: rgba(239,68,68,0.15);   color: #f87171;  border: 1px solid rgba(239,68,68,0.3); }
+    .badge-hr       { background: rgba(245,158,11,0.15);  color: #fcd34d;  border: 1px solid rgba(245,158,11,0.3); }
+    .badge-employee { background: rgba(16,185,129,0.15);  color: #34d399;  border: 1px solid rgba(16,185,129,0.3); }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="register-wrapper">
+
+    <div class="register-logo">
+        <div class="logo-icon">⚡</div>
+        <h1>Create Account</h1>
+        <p>ERP Portal — New User Registration</p>
+    </div>
+
+    <div class="register-card">
+
+        {% if registrationForm.vars.errors|length > 0 %}
+        <div class="form-errors">
+            {{ form_errors(registrationForm) }}
+        </div>
+        {% endif %}
+
+        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            {# Email #}
+            <div class="form-group">
+                <label for="registration_form_email">
+                    <i class="fa-solid fa-envelope" style="margin-right:5px;"></i> Email Address
+                </label>
+                {{ form_widget(registrationForm.email, {'attr': {'id': 'registration_form_email', 'placeholder': 'name@company.com'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            {# Role #}
+            <div class="form-group">
+                <label for="registration_form_role">
+                    <i class="fa-solid fa-shield-halved" style="margin-right:5px;"></i> Role
+                </label>
+                {{ form_widget(registrationForm.role, {'attr': {'id': 'registration_form_role'}}) }}
+                {{ form_errors(registrationForm.role) }}
+                <div class="role-badges" style="margin-top:8px;">
+                    <span class="role-badge badge-admin"><i class="fa-solid fa-crown"></i> Admin</span>
+                    <span class="role-badge badge-hr"><i class="fa-solid fa-users-gear"></i> HR</span>
+                    <span class="role-badge badge-employee"><i class="fa-solid fa-user"></i> Employee</span>
+                </div>
+            </div>
+
+            {# Password #}
+            <div class="form-group">
+                <label for="registration_form_plainPassword">
+                    <i class="fa-solid fa-lock" style="margin-right:5px;"></i> Password
+                </label>
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'id': 'registration_form_plainPassword', 'placeholder': 'Min. 6 characters'}}) }}
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+
+            {# Agree Terms #}
+            <div class="checkbox-group">
+                {{ form_widget(registrationForm.agreeTerms) }}
+                <label for="{{ registrationForm.agreeTerms.vars.id }}">
+                    I agree to the Terms & Conditions
+                </label>
+            </div>
+            {{ form_errors(registrationForm.agreeTerms) }}
+
+            <button type="submit" class="btn-register">
+                <i class="fa-solid fa-user-plus" style="margin-right:8px;"></i> Create Account
+            </button>
+
+        {{ form_end(registrationForm) }}
+
+        <div class="login-link">
+            Already have an account? <a href="{{ path('app_login') }}">Sign in</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Salary index{% endblock %}
+
+{% block body %}
+    <h1>Salary index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Month</th>
+                <th>Year</th>
+                <th>BasicSalary</th>
+                <th>Bonus</th>
+                <th>Deduction</th>
+                <th>NetSalary</th>
+                <th>PaymentStatus</th>
+                <th>CreatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for salary in salaries %}
+            <tr>
+                <td>{{ salary.id }}</td>
+                <td>{{ salary.month }}</td>
+                <td>{{ salary.year }}</td>
+                <td>{{ salary.basicSalary }}</td>
+                <td>{{ salary.bonus }}</td>
+                <td>{{ salary.deduction }}</td>
+                <td>{{ salary.netSalary }}</td>
+                <td>{{ salary.paymentStatus }}</td>
+                <td>{{ salary.createdAt ? salary.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_salary_show', {'id': salary.id}) }}">show</a>
+                    <a href="{{ path('app_salary_edit', {'id': salary.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_salary_new') }}">Create new</a>
+{% endblock %}

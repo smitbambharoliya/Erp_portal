@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Employee index{% endblock %}
+
+{% block body %}
+    <h1>Employee index</h1>
+
+    <table class="table text-blue-500 border-2 border-blue-500 w-full bg-white center">
+        <thead>
+            <tr>
+                <th class="text-blue-500">FirstName</th>
+                <th class="text-blue-500">LastName</th>
+                <th class="text-blue-500">Phone</th>
+                <th class="text-blue-500">Address</th>
+                <th class="text-blue-500">DateOfBirth</th>
+                <th class="text-blue-500">Gender</th>
+                <th class="text-blue-500">JoiningDate</th>
+                <th class="text-blue-500">Designation</th>
+                <th class="text-blue-500">Status</th>
+                <th class="text-blue-500">CreatedAt</th>
+                <th class="text-blue-500">UpdatedAt</th>
+                <th class="text-blue-500">actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for employee in employees %}
+            <tr>
+                <td>{{ employee.firstName }}</td>
+                <td>{{ employee.lastName }}</td>
+                <td>{{ employee.phone }}</td>
+                <td>{{ employee.address }}</td>
+                <td>{{ employee.dateOfBirth }}</td>
+                <td>{{ employee.gender }}</td>
+                <td>{{ employee.joiningDate }}</td>
+                <td>{{ employee.designation }}</td>
+                <td>{{ employee.status }}</td>
+                <td>{{ employee.createdAt ? employee.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ employee.updatedAt ? employee.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_employee_show', {'id': employee.id}) }}">show</a>
+                    <a href="{{ path('app_employee_edit', {'id': employee.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="13">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_employee_new') }}">Create new</a>
+{% endblock %}
