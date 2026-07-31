@@ -1,53 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mark Attendance — ERP Portal{% endblock %}
+{% block title %}Mark Attendance — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}Mark Attendance{% endblock %}
-{% block page_subheading %}Record daily attendance time and status{% endblock %}
 
 {% block body %}
-<div class="card-panel" style="max-width:650px; margin:0 auto;">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-clock" style="margin-right:8px; color:var(--success);"></i> Attendance Entry</h2>
-        <a href="{{ path('app_attendance_index') }}" class="btn-secondary">
+<div class="card" style="max-width:650px; margin:0 auto;">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-clock" style="margin-right:8px; color:var(--success);"></i> Attendance Entry</h5>
+        <a href="{{ path('app_attendance_index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-        <div class="form-grid">
-            {% if form.employee is defined %}
-            <div class="form-group">
-                {{ form_label(form.employee) }}
-                {{ form_widget(form.employee) }}
-                {{ form_errors(form.employee) }}
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="form-grid">
+                {% if form.employee is defined %}
+                <div class="form-group">
+                    {{ form_label(form.employee) }}
+                    {{ form_widget(form.employee) }}
+                    {{ form_errors(form.employee) }}
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    {{ form_label(form.date) }}
+                    {{ form_widget(form.date) }}
+                    {{ form_errors(form.date) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.checkIn) }}
+                    {{ form_widget(form.checkIn) }}
+                    {{ form_errors(form.checkIn) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.checkOut) }}
+                    {{ form_widget(form.checkOut) }}
+                    {{ form_errors(form.checkOut) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.status) }}
+                    {{ form_widget(form.status) }}
+                    {{ form_errors(form.status) }}
+                </div>
             </div>
-            {% endif %}
-            <div class="form-group">
-                {{ form_label(form.date) }}
-                {{ form_widget(form.date) }}
-                {{ form_errors(form.date) }}
+            <div style="margin-top:20px; text-align:right;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i> Submit Attendance
+                </button>
             </div>
-            <div class="form-group">
-                {{ form_label(form.checkIn) }}
-                {{ form_widget(form.checkIn) }}
-                {{ form_errors(form.checkIn) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(form.checkOut) }}
-                {{ form_widget(form.checkOut) }}
-                {{ form_errors(form.checkOut) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(form.status) }}
-                {{ form_widget(form.status) }}
-                {{ form_errors(form.status) }}
-            </div>
-        </div>
-        <div style="margin-top:20px; text-align:right;">
-            <button type="submit" class="btn-primary">
-                <i class="fa-solid fa-check"></i> Submit Attendance
-            </button>
-        </div>
-    {{ form_end(form) }}
+        {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}

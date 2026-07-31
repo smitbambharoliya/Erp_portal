@@ -1,38 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Department — ERP Portal{% endblock %}
+{% block title %}Edit Department — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}Edit Department{% endblock %}
 
 {% block body %}
-<div class="card-panel" style="max-width:600px; margin:0 auto;">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-building-circle-gear" style="margin-right:8px; color:var(--secondary);"></i> Edit {{ department.name }}</h2>
-        <a href="{{ path('app_department_index') }}" class="btn-secondary">
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-sitemap" style="margin-right:8px; color:var(--info);"></i> Edit {{ department.name }}</h5>
+        <a href="{{ path('app_department_index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-        <div class="form-group">
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name) }}
-            {{ form_errors(form.name) }}
-        </div>
-        <div class="form-group">
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description) }}
-            {{ form_errors(form.description) }}
-        </div>
-        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
-            {% if is_granted('ROLE_ADMIN') %}
-            {{ include('department/_delete_form.html.twig') }}
-            {% else %}
-            <div></div>
-            {% endif %}
-            <button type="submit" class="btn-primary">
-                <i class="fa-solid fa-check"></i> Save Changes
-            </button>
-        </div>
-    {{ form_end(form) }}
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="form-group">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+                {{ form_errors(form.name) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
+            </div>
+            <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                {% if is_granted('ROLE_ADMIN') %}
+                {{ include('department/_delete_form.html.twig') }}
+                {% else %}
+                <div></div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i> Save Changes
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}

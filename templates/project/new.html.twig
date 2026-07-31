@@ -1,56 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Project — ERP Portal{% endblock %}
+{% block title %}New Project — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}Create Project{% endblock %}
 
 {% block body %}
-<div class="card-panel" style="max-width:650px; margin:0 auto;">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-folder-plus" style="margin-right:8px; color:#a78bfa;"></i> Project Details</h2>
-        <a href="{{ path('app_project_index') }}" class="btn-secondary">
+<div class="card" style="max-width:650px; margin:0 auto;">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-diagram-project" style="margin-right:8px; color:var(--primary);"></i> Project Details</h5>
+        <a href="{{ path('app_project_index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-        <div class="form-group">
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name) }}
-            {{ form_errors(form.name) }}
-        </div>
-        <div class="form-group">
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description) }}
-            {{ form_errors(form.description) }}
-        </div>
-        <div class="form-grid">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
             <div class="form-group">
-                {{ form_label(form.startDate) }}
-                {{ form_widget(form.startDate) }}
-                {{ form_errors(form.startDate) }}
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+                {{ form_errors(form.name) }}
             </div>
             <div class="form-group">
-                {{ form_label(form.endDate) }}
-                {{ form_widget(form.endDate) }}
-                {{ form_errors(form.endDate) }}
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
             </div>
-            <div class="form-group">
-                {{ form_label(form.budget) }}
-                {{ form_widget(form.budget) }}
-                {{ form_errors(form.budget) }}
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form_label(form.startDate) }}
+                    {{ form_widget(form.startDate) }}
+                    {{ form_errors(form.startDate) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.endDate) }}
+                    {{ form_widget(form.endDate) }}
+                    {{ form_errors(form.endDate) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.budget) }}
+                    {{ form_widget(form.budget) }}
+                    {{ form_errors(form.budget) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.status) }}
+                    {{ form_widget(form.status) }}
+                    {{ form_errors(form.status) }}
+                </div>
             </div>
-            <div class="form-group">
-                {{ form_label(form.status) }}
-                {{ form_widget(form.status) }}
-                {{ form_errors(form.status) }}
-            </div>
-        </div>
 
-        <div style="margin-top:20px; text-align:right;">
-            <button type="submit" class="btn-primary">
-                <i class="fa-solid fa-check"></i> Create Project
-            </button>
-        </div>
-    {{ form_end(form) }}
+            <div style="margin-top:20px; text-align:right;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i> Create Project
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}

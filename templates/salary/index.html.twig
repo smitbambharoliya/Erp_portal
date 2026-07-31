@@ -1,75 +1,72 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Salary & Payroll — ERP Portal{% endblock %}
+{% block title %}Salary Slips — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}Salary & Payroll{% endblock %}
-{% block page_subheading %}Employee compensation and salary slips{% endblock %}
 
 {% block body %}
-<div class="card-panel">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-money-bill-wave" style="margin-right:8px; color:#fb7185;"></i> Payroll Records</h2>
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-wallet" style="margin-right:8px; color:var(--danger);"></i> Payroll Slips</h5>
         {% if is_granted('ROLE_HR') %}
-        <a href="{{ path('app_salary_new') }}" class="btn-primary">
+        <a href="{{ path('app_salary_new') }}" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i> Add Salary Slip
         </a>
         {% endif %}
     </div>
-
-    <div class="table-responsive">
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Employee</th>
-                    <th>Basic Salary</th>
-                    <th>Allowances</th>
-                    <th>Deductions</th>
-                    <th>Net Amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for salary in salaries %}
-                <tr>
-                    <td><strong>#{{ salary.id }}</strong></td>
-                    <td>
-                        <strong>
-                            {% if salary.employee %}
-                                {{ salary.employee.firstName }} {{ salary.employee.lastName }}
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </strong>
-                    </td>
-                    <td>₹{{ salary.basicSalary ?? 0 }}</td>
-                    <td>₹{{ salary.allowances ?? 0 }}</td>
-                    <td>₹{{ salary.deductions ?? 0 }}</td>
-                    <td><strong style="color:#34d399;">₹{{ salary.netSalary ?? 0 }}</strong></td>
-                    <td>
-                        <span class="badge {{ salary.status == 'Paid' ? 'badge-active' : 'badge-pending' }}">
-                            {{ salary.status ?? 'Pending' }}
-                        </span>
-                    </td>
-                    <td>
-                        <div style="display:flex; gap:6px;">
-                            <a href="{{ path('app_salary_show', {'id': salary.id}) }}" class="btn-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee</th>
+                        <th>Basic Salary</th>
+                        <th>Allowances</th>
+                        <th>Deductions</th>
+                        <th>Net Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for salary in salaries %}
+                    <tr>
+                        <td><strong>#{{ salary.id }}</strong></td>
+                        <td>
+                            <strong>
+                                {% if salary.employee %}
+                                    {{ salary.employee.firstName }} {{ salary.employee.lastName }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </strong>
+                        </td>
+                        <td>₹{{ salary.basicSalary ?? 0 }}</td>
+                        <td>₹{{ salary.allowances ?? 0 }}</td>
+                        <td>₹{{ salary.deductions ?? 0 }}</td>
+                        <td><strong style="color:var(--success);">₹{{ salary.netSalary ?? 0 }}</strong></td>
+                        <td>
+                            <span class="badge {{ salary.status == 'Paid' ? 'badge-success' : 'badge-warning' }}">
+                                {{ salary.status ?? 'Pending' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ path('app_salary_show', {'id': salary.id}) }}" class="btn btn-sm btn-secondary"><i class="fa-solid fa-eye"></i></a>
                             {% if is_granted('ROLE_HR') %}
-                            <a href="{{ path('app_salary_edit', {'id': salary.id}) }}" class="btn-edit btn-sm"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{{ path('app_salary_edit', {'id': salary.id}) }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                             {% endif %}
-                        </div>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="8" style="text-align:center; padding:40px; color:var(--text-mute);">
-                        <i class="fa-solid fa-money-bill-transfer" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
-                        No salary records found.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding:40px; color:var(--text-mute);">
+                            No salary records found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

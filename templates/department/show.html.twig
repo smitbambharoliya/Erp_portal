@@ -1,60 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ department.name }} Department — ERP Portal{% endblock %}
+{% block title %}{{ department.name }} Department — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}{{ department.name }} Department{% endblock %}
-{% block page_subheading %}Department details and staff list{% endblock %}
 
 {% block body %}
-<div class="card-panel">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-building" style="margin-right:8px; color:var(--secondary);"></i> {{ department.name }} Overview</h2>
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-sitemap" style="margin-right:8px; color:var(--info);"></i> {{ department.name }} Overview</h5>
         <div>
-            <a href="{{ path('app_department_index') }}" class="btn-secondary" style="margin-right:8px;">
+            <a href="{{ path('app_department_index') }}" class="btn btn-secondary btn-sm" style="margin-right:8px;">
                 <i class="fa-solid fa-arrow-left"></i> Back
             </a>
             {% if is_granted('ROLE_HR') %}
-            <a href="{{ path('app_department_edit', {'id': department.id}) }}" class="btn-primary">
+            <a href="{{ path('app_department_edit', {'id': department.id}) }}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-pen"></i> Edit
             </a>
             {% endif %}
         </div>
     </div>
 
-    <p style="color:var(--text-mute); margin-bottom:24px; font-size:0.95rem;">
-        {{ department.description ?? 'No description available for this department.' }}
-    </p>
+    <div class="card-body">
+        <p style="color:var(--text-mute); margin-bottom:20px; font-size:0.9rem;">
+            {{ department.description ?? 'No description available for this department.' }}
+        </p>
 
-    <h3 style="font-size:1rem; font-weight:700; margin-bottom:16px;">Assigned Employees ({{ department.employees|length }})</h3>
+        <h5 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">Assigned Staff ({{ department.employees|length }})</h5>
 
-    <div class="table-responsive">
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Designation</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for employee in department.employees %}
-                <tr>
-                    <td>#{{ employee.id }}</td>
-                    <td><strong>{{ employee.firstName }} {{ employee.lastName }}</strong></td>
-                    <td>{{ employee.designation ?? '-' }}</td>
-                    <td>{{ employee.phone ?? '-' }}</td>
-                    <td><span class="badge badge-active">{{ employee.status ?? 'Active' }}</span></td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" style="text-align:center; padding:30px; color:var(--text-mute);">
-                        No employees currently assigned to this department.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Designation</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for employee in department.employees %}
+                    <tr>
+                        <td>#{{ employee.id }}</td>
+                        <td><strong>{{ employee.firstName }} {{ employee.lastName }}</strong></td>
+                        <td>{{ employee.designation ?? '-' }}</td>
+                        <td>{{ employee.phone ?? '-' }}</td>
+                        <td><span class="badge badge-success">{{ employee.status ?? 'Active' }}</span></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:30px; color:var(--text-mute);">
+                            No employees currently assigned to this department.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

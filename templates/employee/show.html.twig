@@ -1,70 +1,72 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ employee.firstName }} {{ employee.lastName }} — ERP Portal{% endblock %}
+{% block title %}{{ employee.firstName }} {{ employee.lastName }} — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}Employee Profile{% endblock %}
-{% block page_subheading %}Detailed view of employee personnel record{% endblock %}
 
 {% block body %}
-<div class="card-panel" style="max-width:700px; margin:0 auto;">
-    <div class="card-header-flex">
+<div class="card" style="max-width:700px; margin:0 auto;">
+    <div class="card-header">
         <div style="display:flex; align-items:center; gap:16px;">
-            <div style="width:54px; height:54px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.4rem;">
+            <div style="width:48px; height:48px; background-color:var(--primary); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.3rem;">
                 {{ employee.firstName|slice(0,1)|upper }}
             </div>
             <div>
-                <h2>{{ employee.firstName }} {{ employee.lastName }}</h2>
+                <h5 style="margin:0;">{{ employee.firstName }} {{ employee.lastName }}</h5>
                 <div style="font-size:0.83rem; color:var(--text-mute);">{{ employee.designation ?? 'Employee' }} {% if employee.department %} · {{ employee.department.name }}{% endif %}</div>
             </div>
         </div>
-        <a href="{{ path('app_employee_index') }}" class="btn-secondary">
+        <a href="{{ path('app_employee_index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    <table class="custom-table" style="margin-top:16px;">
-        <tbody>
-            <tr>
-                <th style="width:30%;">Employee ID</th>
-                <td>#{{ employee.id }}</td>
-            </tr>
-            <tr>
-                <th>User Account</th>
-                <td>{{ employee.user ? employee.user.email : 'None' }}</td>
-            </tr>
-            <tr>
-                <th>Department</th>
-                <td>{{ employee.department ? employee.department.name : 'Unassigned' }}</td>
-            </tr>
-            <tr>
-                <th>Phone</th>
-                <td>{{ employee.phone ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Address</th>
-                <td>{{ employee.address ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Gender</th>
-                <td>{{ employee.gender ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Joining Date</th>
-                <td>{{ employee.joiningDate ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>
-                    <span class="badge {{ employee.status == 'Active' ? 'badge-active' : 'badge-inactive' }}">
-                        {{ employee.status ?? 'Active' }}
-                    </span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width:30%;">Employee ID</th>
+                        <td>#{{ employee.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>User Account</th>
+                        <td>{{ employee.user ? employee.user.email : 'None' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td>{{ employee.department ? employee.department.name : 'Unassigned' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Phone</th>
+                        <td>{{ employee.phone ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td>{{ employee.address ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Gender</th>
+                        <td>{{ employee.gender ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Joining Date</th>
+                        <td>{{ employee.joiningDate ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge {{ employee.status == 'Active' ? 'badge-success' : 'badge-danger' }}">
+                                {{ employee.status ?? 'Active' }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     {% if is_granted('ROLE_HR') %}
-    <div style="margin-top:24px; text-align:right;">
-        <a href="{{ path('app_employee_edit', {'id': employee.id}) }}" class="btn-primary">
+    <div style="padding:16px 20px; text-align:right; border-top:1px solid var(--border-color);">
+        <a href="{{ path('app_employee_edit', {'id': employee.id}) }}" class="btn btn-primary">
             <i class="fa-solid fa-pen"></i> Edit Profile
         </a>
     </div>

@@ -1,75 +1,72 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Leave Requests — ERP Portal{% endblock %}
+{% block title %}Leave Requests — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}Leave Applications{% endblock %}
-{% block page_subheading %}Manage and apply for employee leave requests{% endblock %}
 
 {% block body %}
-<div class="card-panel">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-plane-departure" style="margin-right:8px; color:var(--warning);"></i> Leave Applications</h2>
-        <a href="{{ path('app_leave_request_new') }}" class="btn-primary">
-            <i class="fa-solid fa-plus"></i> Apply for Leave
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-plane-departure" style="margin-right:8px; color:var(--warning);"></i> Leave Applications</h5>
+        <a href="{{ path('app_leave_request_new') }}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Apply Leave
         </a>
     </div>
-
-    <div class="table-responsive">
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Employee</th>
-                    <th>Leave Type</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for leave in leave_requests %}
-                <tr>
-                    <td><strong>#{{ leave.id }}</strong></td>
-                    <td>
-                        <strong>
-                            {% if leave.employee %}
-                                {{ leave.employee.firstName }} {{ leave.employee.lastName }}
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee</th>
+                        <th>Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for leave in leave_requests %}
+                    <tr>
+                        <td><strong>#{{ leave.id }}</strong></td>
+                        <td>
+                            <strong>
+                                {% if leave.employee %}
+                                    {{ leave.employee.firstName }} {{ leave.employee.lastName }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </strong>
+                        </td>
+                        <td><span class="badge badge-info">{{ leave.leaveType ?? 'Casual Leave' }}</span></td>
+                        <td>{{ leave.startDate ?? '-' }}</td>
+                        <td>{{ leave.endDate ?? '-' }}</td>
+                        <td>
+                            {% if leave.status == 'Approved' %}
+                                <span class="badge badge-success">Approved</span>
+                            {% elseif leave.status == 'Rejected' %}
+                                <span class="badge badge-danger">Rejected</span>
                             {% else %}
-                                Unknown
+                                <span class="badge badge-warning">Pending</span>
                             {% endif %}
-                        </strong>
-                    </td>
-                    <td><span class="badge badge-info"><i class="fa-solid fa-umbrella-beach" style="margin-right:4px;"></i> {{ leave.leaveType ?? 'Casual Leave' }}</span></td>
-                    <td>{{ leave.startDate ?? '-' }}</td>
-                    <td>{{ leave.endDate ?? '-' }}</td>
-                    <td>
-                        {% if leave.status == 'Approved' %}
-                            <span class="badge badge-active"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i> Approved</span>
-                        {% elseif leave.status == 'Rejected' %}
-                            <span class="badge badge-inactive"><i class="fa-solid fa-circle-xmark" style="margin-right:4px;"></i> Rejected</span>
-                        {% else %}
-                            <span class="badge badge-pending"><i class="fa-solid fa-clock" style="margin-right:4px;"></i> Pending</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <div style="display:flex; gap:6px;">
-                            <a href="{{ path('app_leave_request_show', {'id': leave.id}) }}" class="btn-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                        </td>
+                        <td>
+                            <a href="{{ path('app_leave_request_show', {'id': leave.id}) }}" class="btn btn-sm btn-secondary"><i class="fa-solid fa-eye"></i></a>
                             {% if is_granted('ROLE_HR') %}
-                            <a href="{{ path('app_leave_request_edit', {'id': leave.id}) }}" class="btn-edit btn-sm"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{{ path('app_leave_request_edit', {'id': leave.id}) }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                             {% endif %}
-                        </div>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7" style="text-align:center; padding:40px; color:var(--text-mute);">
-                        <i class="fa-solid fa-calendar-minus" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
-                        No leave requests found.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:var(--text-mute);">
+                            No leave requests found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

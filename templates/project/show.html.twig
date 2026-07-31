@@ -1,50 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ project.name }} — ERP Portal{% endblock %}
+{% block title %}{{ project.name }} — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}{{ project.name }}{% endblock %}
 
 {% block body %}
-<div class="card-panel" style="max-width:600px; margin:0 auto;">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-diagram-project" style="margin-right:8px; color:#a78bfa;"></i> Project Details</h2>
-        <a href="{{ path('app_project_index') }}" class="btn-secondary">
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-diagram-project" style="margin-right:8px; color:var(--primary);"></i> Project Details</h5>
+        <a href="{{ path('app_project_index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    <table class="custom-table" style="margin-top:16px;">
-        <tbody>
-            <tr>
-                <th style="width:35%;">Project Name</th>
-                <td><strong>{{ project.name }}</strong></td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ project.description ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Start Date</th>
-                <td>{{ project.startDate ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>End Date</th>
-                <td>{{ project.endDate ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Budget</th>
-                <td>₹{{ project.budget ?? 0 }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>
-                    <span class="badge badge-info">{{ project.status ?? 'Active' }}</span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width:35%;">Project Name</th>
+                        <td><strong>{{ project.name }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ project.description ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Start Date</th>
+                        <td>{{ project.startDate ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>End Date</th>
+                        <td>{{ project.endDate ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Budget</th>
+                        <td>₹{{ project.budget ?? 0 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge badge-info">{{ project.status ?? 'Active' }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <div style="margin-top:24px; text-align:right;">
-        <a href="{{ path('app_project_edit', {'id': project.id}) }}" class="btn-primary">
+    <div style="padding:16px 20px; text-align:right; border-top:1px solid var(--border-color);">
+        <a href="{{ path('app_project_edit', {'id': project.id}) }}" class="btn btn-primary">
             <i class="fa-solid fa-pen"></i> Edit Project
         </a>
     </div>

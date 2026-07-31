@@ -1,48 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ task.title }} — ERP Portal{% endblock %}
+{% block title %}{{ task.title }} — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}{{ task.title }}{% endblock %}
 
 {% block body %}
-<div class="card-panel" style="max-width:600px; margin:0 auto;">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-list-check" style="margin-right:8px; color:var(--secondary);"></i> Task #{{ task.id }} Details</h2>
-        <a href="{{ path('app_task_index') }}" class="btn-secondary">
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-list-check" style="margin-right:8px; color:var(--info);"></i> Task #{{ task.id }} Details</h5>
+        <a href="{{ path('app_task_index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    <table class="custom-table" style="margin-top:16px;">
-        <tbody>
-            <tr>
-                <th style="width:35%;">Title</th>
-                <td><strong>{{ task.title }}</strong></td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ task.description ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Priority</th>
-                <td>
-                    <span class="badge {{ task.priority == 'High' ? 'badge-inactive' : 'badge-info' }}">{{ task.priority ?? 'Normal' }}</span>
-                </td>
-            </tr>
-            <tr>
-                <th>Deadline</th>
-                <td>{{ task.deadline ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>
-                    <span class="badge {{ task.status == 'Completed' ? 'badge-active' : 'badge-pending' }}">{{ task.status ?? 'Pending' }}</span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width:35%;">Title</th>
+                        <td><strong>{{ task.title }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ task.description ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Priority</th>
+                        <td>
+                            <span class="badge {{ task.priority == 'High' ? 'badge-danger' : 'badge-info' }}">{{ task.priority ?? 'Normal' }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Deadline</th>
+                        <td>{{ task.deadline ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge {{ task.status == 'Completed' ? 'badge-success' : 'badge-warning' }}">{{ task.status ?? 'Pending' }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <div style="margin-top:24px; text-align:right;">
-        <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn-primary">
+    <div style="padding:16px 20px; text-align:right; border-top:1px solid var(--border-color);">
+        <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn btn-primary">
             <i class="fa-solid fa-pen"></i> Edit Task
         </a>
     </div>

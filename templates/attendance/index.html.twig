@@ -1,75 +1,72 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Attendance — ERP Portal{% endblock %}
-{% block page_heading %}Attendance Records{% endblock %}
-{% block page_subheading %}Track daily employee presence, clock in/out times, and statuses{% endblock %}
+{% block title %}Attendance — CoreUI ERP Portal{% endblock %}
+{% block page_heading %}Attendance Logs{% endblock %}
 
 {% block body %}
-<div class="card-panel">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-calendar-check" style="margin-right:8px; color:var(--success);"></i> Attendance Logs</h2>
-        <a href="{{ path('app_attendance_new') }}" class="btn-primary">
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-calendar-check" style="margin-right:8px; color:var(--success);"></i> Attendance Records</h5>
+        <a href="{{ path('app_attendance_new') }}" class="btn btn-primary">
             <i class="fa-solid fa-clock"></i> Mark Attendance
         </a>
     </div>
-
-    <div class="table-responsive">
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Employee</th>
-                    <th>Date</th>
-                    <th>Check In</th>
-                    <th>Check Out</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for attendance in attendances %}
-                <tr>
-                    <td><strong>#{{ attendance.id }}</strong></td>
-                    <td>
-                        <strong>
-                            {% if attendance.employee %}
-                                {{ attendance.employee.firstName }} {{ attendance.employee.lastName }}
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for attendance in attendances %}
+                    <tr>
+                        <td><strong>#{{ attendance.id }}</strong></td>
+                        <td>
+                            <strong>
+                                {% if attendance.employee %}
+                                    {{ attendance.employee.firstName }} {{ attendance.employee.lastName }}
+                                {% else %}
+                                    Unknown Employee
+                                {% endif %}
+                            </strong>
+                        </td>
+                        <td>{{ attendance.date ?? '-' }}</td>
+                        <td><span style="color:var(--success); font-weight:600;">{{ attendance.checkIn ?? '-' }}</span></td>
+                        <td><span style="color:var(--danger); font-weight:600;">{{ attendance.checkOut ?? '-' }}</span></td>
+                        <td>
+                            {% if attendance.status == 'Present' %}
+                                <span class="badge badge-success">Present</span>
+                            {% elseif attendance.status == 'Absent' %}
+                                <span class="badge badge-danger">Absent</span>
                             {% else %}
-                                Unknown Employee
+                                <span class="badge badge-warning">{{ attendance.status ?? 'Pending' }}</span>
                             {% endif %}
-                        </strong>
-                    </td>
-                    <td><i class="fa-regular fa-calendar" style="margin-right:5px; color:var(--text-mute);"></i> {{ attendance.date ?? '-' }}</td>
-                    <td><span style="color:#34d399; font-weight:600;"><i class="fa-solid fa-arrow-right-to-bracket" style="margin-right:4px;"></i> {{ attendance.checkIn ?? '-' }}</span></td>
-                    <td><span style="color:#fb7185; font-weight:600;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:4px;"></i> {{ attendance.checkOut ?? '-' }}</span></td>
-                    <td>
-                        {% if attendance.status == 'Present' %}
-                            <span class="badge badge-active"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i> Present</span>
-                        {% elseif attendance.status == 'Absent' %}
-                            <span class="badge badge-inactive"><i class="fa-solid fa-circle-xmark" style="margin-right:4px;"></i> Absent</span>
-                        {% else %}
-                            <span class="badge badge-pending">{{ attendance.status ?? 'Pending' }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <div style="display:flex; gap:6px;">
-                            <a href="{{ path('app_attendance_show', {'id': attendance.id}) }}" class="btn-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                        </td>
+                        <td>
+                            <a href="{{ path('app_attendance_show', {'id': attendance.id}) }}" class="btn btn-sm btn-secondary"><i class="fa-solid fa-eye"></i></a>
                             {% if is_granted('ROLE_HR') %}
-                            <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn-edit btn-sm"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                             {% endif %}
-                        </div>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7" style="text-align:center; padding:40px; color:var(--text-mute);">
-                        <i class="fa-solid fa-calendar-xmark" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
-                        No attendance records found.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:var(--text-mute);">
+                            No attendance records found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

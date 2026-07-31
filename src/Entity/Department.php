@@ -103,10 +103,10 @@ class Department
         return $this->createdAt;
     }
     #[ORM\PrePersist]
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(): static
     {
-        $this->createdAt = $createdAt;
-
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
         return $this;
     }
 
@@ -115,10 +115,9 @@ class Department
         return $this->updatedAt;
     }
     #[ORM\PrePersist]
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(): static
     {
-        $this->updatedAt = $updatedAt;
-
+        $this->updatedAt = new \DateTimeImmutable();
         return $this;
     }
 }

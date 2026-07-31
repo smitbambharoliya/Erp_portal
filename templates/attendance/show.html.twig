@@ -1,49 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Attendance Log Details — ERP Portal{% endblock %}
+{% block title %}Attendance Log Details — CoreUI ERP Portal{% endblock %}
 {% block page_heading %}Attendance Entry Details{% endblock %}
 
 {% block body %}
-<div class="card-panel" style="max-width:600px; margin:0 auto;">
-    <div class="card-header-flex">
-        <h2><i class="fa-solid fa-calendar-day" style="margin-right:8px; color:var(--success);"></i> Log #{{ attendance.id }}</h2>
-        <a href="{{ path('app_attendance_index') }}" class="btn-secondary">
+<div class="card" style="max-width:600px; margin:0 auto;">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-calendar-day" style="margin-right:8px; color:var(--success);"></i> Log #{{ attendance.id }}</h5>
+        <a href="{{ path('app_attendance_index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    <table class="custom-table" style="margin-top:16px;">
-        <tbody>
-            <tr>
-                <th style="width:35%;">Employee</th>
-                <td><strong>{{ attendance.employee ? attendance.employee.firstName ~ ' ' ~ attendance.employee.lastName : 'Unknown' }}</strong></td>
-            </tr>
-            <tr>
-                <th>Date</th>
-                <td>{{ attendance.date }}</td>
-            </tr>
-            <tr>
-                <th>Check In Time</th>
-                <td><span style="color:#34d399; font-weight:600;">{{ attendance.checkIn ?? 'N/A' }}</span></td>
-            </tr>
-            <tr>
-                <th>Check Out Time</th>
-                <td><span style="color:#fb7185; font-weight:600;">{{ attendance.checkOut ?? 'N/A' }}</span></td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>
-                    <span class="badge {{ attendance.status == 'Present' ? 'badge-active' : 'badge-inactive' }}">
-                        {{ attendance.status ?? 'Pending' }}
-                    </span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width:35%;">Employee</th>
+                        <td><strong>{{ attendance.employee ? attendance.employee.firstName ~ ' ' ~ attendance.employee.lastName : 'Unknown' }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ attendance.date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Check In Time</th>
+                        <td><span style="color:var(--success); font-weight:600;">{{ attendance.checkIn ?? 'N/A' }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Check Out Time</th>
+                        <td><span style="color:var(--danger); font-weight:600;">{{ attendance.checkOut ?? 'N/A' }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge {{ attendance.status == 'Present' ? 'badge-success' : 'badge-danger' }}">
+                                {{ attendance.status ?? 'Pending' }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     {% if is_granted('ROLE_HR') %}
-    <div style="margin-top:24px; text-align:right;">
-        <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn-primary">
+    <div style="padding:16px 20px; text-align:right; border-top:1px solid var(--border-color);">
+        <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn btn-primary">
             <i class="fa-solid fa-pen"></i> Edit Entry
         </a>
     </div>
