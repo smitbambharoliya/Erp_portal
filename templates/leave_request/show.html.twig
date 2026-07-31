@@ -1,46 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}LeaveRequest{% endblock %}
+{% block title %}Leave Request Details — ERP Portal{% endblock %}
+{% block page_heading %}Leave Application Details{% endblock %}
 
 {% block body %}
-    <h1>LeaveRequest</h1>
+<div class="card-panel" style="max-width:600px; margin:0 auto;">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-umbrella-beach" style="margin-right:8px; color:var(--warning);"></i> Application #{{ leave_request.id }}</h2>
+        <a href="{{ path('app_leave_request_index') }}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    <table class="table">
+    <table class="custom-table" style="margin-top:16px;">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ leave_request.id }}</td>
+                <th style="width:35%;">Applicant Employee</th>
+                <td><strong>{{ leave_request.employee ? leave_request.employee.firstName ~ ' ' ~ leave_request.employee.lastName : 'Unknown' }}</strong></td>
             </tr>
             <tr>
-                <th>LeaveType</th>
-                <td>{{ leave_request.leaveType }}</td>
+                <th>Leave Type</th>
+                <td><span class="badge badge-info">{{ leave_request.leaveType ?? 'Casual Leave' }}</span></td>
             </tr>
             <tr>
-                <th>StartDate</th>
-                <td>{{ leave_request.startDate }}</td>
+                <th>Start Date</th>
+                <td>{{ leave_request.startDate ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <th>EndDate</th>
-                <td>{{ leave_request.endDate }}</td>
+                <th>End Date</th>
+                <td>{{ leave_request.endDate ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <th>Status</th>
-                <td>{{ leave_request.status }}</td>
-            </tr>
-            <tr>
-                <th>ApprovedBy</th>
-                <td>{{ leave_request.approvedBy }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ leave_request.createdAt ? leave_request.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    {% if leave_request.status == 'Approved' %}
+                        <span class="badge badge-active">Approved</span>
+                    {% elseif leave_request.status == 'Rejected' %}
+                        <span class="badge badge-inactive">Rejected</span>
+                    {% else %}
+                        <span class="badge badge-pending">Pending Approval</span>
+                    {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_leave_request_index') }}">back to list</a>
-
-    <a href="{{ path('app_leave_request_edit', {'id': leave_request.id}) }}">edit</a>
-
-    {{ include('leave_request/_delete_form.html.twig') }}
+    {% if is_granted('ROLE_HR') %}
+    <div style="margin-top:24px; text-align:right;">
+        <a href="{{ path('app_leave_request_edit', {'id': leave_request.id}) }}" class="btn-primary">
+            <i class="fa-solid fa-pen"></i> Review / Edit Status
+        </a>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

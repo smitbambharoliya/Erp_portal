@@ -1,13 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit LeaveRequest{% endblock %}
+{% block title %}Edit Leave Request — ERP Portal{% endblock %}
+{% block page_heading %}Edit Leave Request{% endblock %}
 
 {% block body %}
-    <h1>Edit LeaveRequest</h1>
+<div class="card-panel" style="max-width:650px; margin:0 auto;">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-pen-to-square" style="margin-right:8px; color:var(--warning);"></i> Leave Application #{{ leave_request.id }}</h2>
+        <a href="{{ path('app_leave_request_index') }}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    {{ include('leave_request/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="form-grid">
+            <div class="form-group">
+                {{ form_label(form.leaveType) }}
+                {{ form_widget(form.leaveType) }}
+                {{ form_errors(form.leaveType) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.status) }}
+                {{ form_widget(form.status) }}
+                {{ form_errors(form.status) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.startDate) }}
+                {{ form_widget(form.startDate) }}
+                {{ form_errors(form.startDate) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.endDate) }}
+                {{ form_widget(form.endDate) }}
+                {{ form_errors(form.endDate) }}
+            </div>
+        </div>
 
-    <a href="{{ path('app_leave_request_index') }}">back to list</a>
-
-    {{ include('leave_request/_delete_form.html.twig') }}
+        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+            {% if is_granted('ROLE_ADMIN') %}
+            {{ include('leave_request/_delete_form.html.twig') }}
+            {% else %}
+            <div></div>
+            {% endif %}
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-check"></i> Save Changes
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
 {% endblock %}

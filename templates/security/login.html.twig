@@ -1,38 +1,106 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Sign In — ERP Portal{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
+<style>
+    .login-wrapper {
+        width: 100%;
+        max-width: 440px;
+        margin: 60px auto;
+        padding: 20px;
+    }
+    .login-card {
+        background: rgba(30,41,59,0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(99,102,241,0.2);
+        border-radius: 20px;
+        padding: 36px 32px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+    .login-logo { text-align: center; margin-bottom: 28px; }
+    .login-logo .logo-icon {
+        width: 54px; height: 54px;
+        background: linear-gradient(135deg, #6366f1, #0ea5e9);
+        border-radius: 16px;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: 0 0 30px rgba(99,102,241,0.4);
+        margin-bottom: 12px;
+    }
+    .login-logo h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; }
+    .login-logo p  { color: #94a3b8; font-size: 0.85rem; margin-top: 4px; }
 
-    <div class="login-container bg-gray-100 flex items-center justify-center h-screen">
-        <h2 class="">Login</h2>
+    .btn-submit {
+        width: 100%; padding: 14px;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        border: none; border-radius: 12px;
+        color: white; font-size: 0.95rem; font-weight: 600;
+        cursor: pointer; transition: all 0.2s ease;
+        margin-top: 10px;
+    }
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        box-shadow: 0 8px 25px rgba(99,102,241,0.4);
+        transform: translateY(-1px);
+    }
+
+    .register-link { text-align: center; margin-top: 20px; font-size: 0.83rem; color: #64748b; }
+    .register-link a { color: #818cf8; text-decoration: none; font-weight: 500; }
+    .register-link a:hover { color: #a5b4fc; }
+</style>
+{% endblock %}
+
+{% block body_login %}
+<div class="login-wrapper">
+
+    <div class="login-logo">
+        <div class="logo-icon">⚡</div>
+        <h1>Welcome Back</h1>
+        <p>Sign in to your ERP Portal account</p>
+    </div>
+
+    <div class="login-card">
+
+        {% if error %}
+            <div class="alert alert-danger" style="margin-bottom:20px;">
+                <i class="fa-solid fa-triangle-exclamation"></i> {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="alert alert-warning" style="margin-bottom:20px;">
+                Logged in as {{ app.user.userIdentifier }}. <a href="{{ path('app_logout') }}" style="color:#fcd34d; font-weight:700;">Logout</a>
+            </div>
+        {% endif %}
+
         <form method="post">
-            {% if error %}
-                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
-
-            {% if app.user %}
-                <div class="mb-3">
-                    You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
-                </div>
-            {% endif %}
-
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-            <label for="inputEmail">Email</label>
-            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-            <label for="inputPassword">Password</label>
-            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" name="_remember_me"> Remember me
-                </label>
+            <div class="form-group">
+                <label for="inputEmail"><i class="fa-solid fa-envelope" style="margin-right:5px;"></i> Email Address</label>
+                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" placeholder="name@company.com" autocomplete="email" required autofocus>
             </div>
 
-            <button class="btn btn-lg btn-primary" type="submit">
-                Sign in
+            <div class="form-group">
+                <label for="inputPassword"><i class="fa-solid fa-lock" style="margin-right:5px;"></i> Password</label>
+                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Enter password" autocomplete="current-password" required>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" name="_remember_me" id="remember_me" style="accent-color:#6366f1; width:16px; height:16px;">
+                <label for="remember_me" style="margin:0; text-transform:none; font-weight:400; font-size:0.83rem; cursor:pointer;">Remember me on this device</label>
+            </div>
+
+            <button class="btn-submit" type="submit">
+                <i class="fa-solid fa-right-to-bracket" style="margin-right:8px;"></i> Sign In
             </button>
-</form>
+        </form>
+
+        <div class="register-link">
+            Don't have an account yet? <a href="{{ path('app_register') }}">Register here</a>
+        </div>
+
+    </div>
 </div>
 {% endblock %}

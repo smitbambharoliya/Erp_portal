@@ -1,45 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}LeaveRequest index{% endblock %}
+{% block title %}Leave Requests — ERP Portal{% endblock %}
+{% block page_heading %}Leave Applications{% endblock %}
+{% block page_subheading %}Manage and apply for employee leave requests{% endblock %}
 
 {% block body %}
-    <h1>LeaveRequest index</h1>
+<div class="card-panel">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-plane-departure" style="margin-right:8px; color:var(--warning);"></i> Leave Applications</h2>
+        <a href="{{ path('app_leave_request_new') }}" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Apply for Leave
+        </a>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>LeaveType</th>
-                <th>StartDate</th>
-                <th>EndDate</th>
-                <th>Status</th>
-                <th>ApprovedBy</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for leave_request in leave_requests %}
-            <tr>
-                <td>{{ leave_request.id }}</td>
-                <td>{{ leave_request.leaveType }}</td>
-                <td>{{ leave_request.startDate }}</td>
-                <td>{{ leave_request.endDate }}</td>
-                <td>{{ leave_request.status }}</td>
-                <td>{{ leave_request.approvedBy }}</td>
-                <td>{{ leave_request.createdAt ? leave_request.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_leave_request_show', {'id': leave_request.id}) }}">show</a>
-                    <a href="{{ path('app_leave_request_edit', {'id': leave_request.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_leave_request_new') }}">Create new</a>
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Employee</th>
+                    <th>Leave Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for leave in leave_requests %}
+                <tr>
+                    <td><strong>#{{ leave.id }}</strong></td>
+                    <td>
+                        <strong>
+                            {% if leave.employee %}
+                                {{ leave.employee.firstName }} {{ leave.employee.lastName }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </strong>
+                    </td>
+                    <td><span class="badge badge-info"><i class="fa-solid fa-umbrella-beach" style="margin-right:4px;"></i> {{ leave.leaveType ?? 'Casual Leave' }}</span></td>
+                    <td>{{ leave.startDate ?? '-' }}</td>
+                    <td>{{ leave.endDate ?? '-' }}</td>
+                    <td>
+                        {% if leave.status == 'Approved' %}
+                            <span class="badge badge-active"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i> Approved</span>
+                        {% elseif leave.status == 'Rejected' %}
+                            <span class="badge badge-inactive"><i class="fa-solid fa-circle-xmark" style="margin-right:4px;"></i> Rejected</span>
+                        {% else %}
+                            <span class="badge badge-pending"><i class="fa-solid fa-clock" style="margin-right:4px;"></i> Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ path('app_leave_request_show', {'id': leave.id}) }}" class="btn-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                            {% if is_granted('ROLE_HR') %}
+                            <a href="{{ path('app_leave_request_edit', {'id': leave.id}) }}" class="btn-edit btn-sm"><i class="fa-solid fa-pen"></i></a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:40px; color:var(--text-mute);">
+                        <i class="fa-solid fa-calendar-minus" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+                        No leave requests found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

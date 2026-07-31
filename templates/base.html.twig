@@ -1,26 +1,384 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}ERP Portal{% endblock %}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <style>
+            *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+            :root {
+                --primary:   #6366f1;
+                --primary-d: #4f46e5;
+                --secondary: #0ea5e9;
+                --success:   #10b981;
+                --warning:   #f59e0b;
+                --danger:    #ef4444;
+                --dark:      #0f172a;
+                --dark-mid:  #1e293b;
+                --dark-soft: #334155;
+                --text-main: #f8fafc;
+                --text-mute: #94a3b8;
+                --card-bg:   rgba(30,41,59,0.85);
+                --border:    rgba(99,102,241,0.18);
+                --glass:     rgba(255,255,255,0.05);
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background: var(--dark);
+                color: var(--text-main);
+                min-height: 100vh;
+                display: flex;
+            }
+
+            /* Animated background glow */
+            body::before {
+                content: '';
+                position: fixed; inset: 0; z-index: 0;
+                background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,102,241,0.15) 0%, transparent 60%),
+                            radial-gradient(ellipse 60% 50% at 80% 90%, rgba(14,165,233,0.1) 0%, transparent 60%);
+                pointer-events: none;
+            }
+
+            /* Layout wrapper */
+            .app-layout { display: flex; width: 100%; min-height: 100vh; position: relative; z-index: 1; }
+            .auth-layout { display: flex; width: 100%; min-height: 100vh; align-items: center; justify-content: center; position: relative; z-index: 1; }
+
+            /* Sidebar */
+            .sidebar {
+                width: 260px;
+                background: rgba(15,23,42,0.96);
+                backdrop-filter: blur(20px);
+                border-right: 1px solid var(--border);
+                display: flex;
+                flex-direction: column;
+                position: fixed; left: 0; top: 0; bottom: 0;
+                z-index: 100;
+            }
+
+            .sidebar-logo {
+                padding: 24px 20px;
+                border-bottom: 1px solid var(--border);
+                display: flex; align-items: center; gap: 14px;
+            }
+
+            .logo-icon {
+                width: 42px; height: 42px;
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                border-radius: 12px;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 1.2rem;
+                box-shadow: 0 0 20px rgba(99,102,241,0.4);
+                flex-shrink: 0;
+            }
+
+            .logo-text strong { font-size: 1rem; font-weight: 700; letter-spacing: 0.5px; display: block; }
+            .logo-text span   { font-size: 0.72rem; color: var(--text-mute); }
+
+            .sidebar-nav { padding: 16px 12px; flex: 1; overflow-y: auto; }
+
+            .nav-section-title {
+                font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
+                letter-spacing: 1.2px; color: var(--text-mute);
+                padding: 10px 12px 6px; margin-top: 8px;
+            }
+
+            .nav-link {
+                display: flex; align-items: center; gap: 12px;
+                padding: 11px 14px; border-radius: 10px;
+                text-decoration: none; color: var(--text-mute);
+                font-size: 0.875rem; font-weight: 500;
+                transition: all 0.2s ease; margin-bottom: 2px;
+            }
+            .nav-link:hover { background: var(--glass); color: var(--text-main); transform: translateX(3px); }
+            .nav-link.active {
+                background: rgba(99,102,241,0.18); color: var(--primary);
+                border-left: 3px solid var(--primary); padding-left: 11px;
+            }
+            .nav-link i { width: 18px; text-align: center; font-size: 0.9rem; }
+
+            .sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); }
+
+            .user-card {
+                display: flex; align-items: center; gap: 12px;
+                padding: 10px 12px; border-radius: 12px;
+                background: var(--glass); border: 1px solid var(--border);
+            }
+            .user-avatar {
+                width: 36px; height: 36px;
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                border-radius: 10px;
+                display: flex; align-items: center; justify-content: center;
+                font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+            }
+            .user-info strong { display: block; font-size: 0.8rem; font-weight: 600; }
+            .user-info span   { font-size: 0.7rem; color: var(--text-mute); }
+
+            /* Main Content Area */
+            .main-content {
+                margin-left: 260px;
+                flex: 1;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                position: relative; z-index: 1;
+                width: calc(100% - 260px);
+            }
+            .main-auth-content {
+                width: 100%;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                position: relative; z-index: 1;
+            }
+
+            .topbar {
+                padding: 16px 32px;
+                display: flex; align-items: center; justify-content: space-between;
+                background: rgba(15,23,42,0.7);
+                backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border);
+                position: sticky; top: 0; z-index: 50;
+            }
+
+            .page-title-wrap h1 { font-size: 1.3rem; font-weight: 700; }
+            .page-title-wrap p  { font-size: 0.8rem; color: var(--text-mute); margin-top: 2px; }
+
+            .topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+            .logout-btn {
+                display: inline-flex; align-items: center; gap: 8px;
+                padding: 8px 16px;
+                background: rgba(239,68,68,0.12);
+                border: 1px solid rgba(239,68,68,0.3);
+                border-radius: 10px;
+                color: #f87171; text-decoration: none;
+                font-size: 0.82rem; font-weight: 500;
+                transition: all 0.2s;
+            }
+            .logout-btn:hover { background: rgba(239,68,68,0.25); color: #fca5a5; }
+
+            /* Content Container */
+            .content-wrapper { padding: 28px 32px; flex: 1; width: 100%; }
+
+            /* Flash messages */
+            .flash-container { margin-bottom: 20px; }
+            .alert {
+                padding: 14px 20px; border-radius: 12px; font-size: 0.875rem;
+                font-weight: 500; display: flex; align-items: center; gap: 10px;
+                margin-bottom: 12px;
+            }
+            .alert-success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; }
+            .alert-danger  { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
+            .alert-warning { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+
+            /* Tables & Cards Utilities */
+            .card-panel {
+                background: var(--card-bg);
+                backdrop-filter: blur(12px);
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+
+            .card-header-flex {
+                display: flex; align-items: center; justify-content: space-between;
+                margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+            }
+            .card-header-flex h2 { font-size: 1.1rem; font-weight: 700; }
+
+            /* Table Styles */
+            .table-responsive { width: 100%; overflow-x: auto; }
+            .custom-table {
+                width: 100%; border-collapse: separate; border-spacing: 0;
+                font-size: 0.875rem;
+            }
+            .custom-table th {
+                background: rgba(15,23,42,0.6);
+                color: var(--text-mute);
+                font-weight: 600; font-size: 0.75rem;
+                text-transform: uppercase; letter-spacing: 0.8px;
+                padding: 14px 16px; text-align: left;
+                border-bottom: 1px solid var(--border);
+            }
+            .custom-table td {
+                padding: 14px 16px;
+                border-bottom: 1px solid rgba(99,102,241,0.08);
+                color: var(--text-main);
+                vertical-align: middle;
+            }
+            .custom-table tbody tr { transition: background 0.2s; }
+            .custom-table tbody tr:hover { background: var(--glass); }
+
+            /* Buttons */
+            .btn-primary {
+                display: inline-flex; align-items: center; gap: 8px;
+                padding: 10px 20px; background: linear-gradient(135deg, var(--primary), var(--primary-d));
+                color: white; border: none; border-radius: 10px;
+                font-size: 0.85rem; font-weight: 600; text-decoration: none;
+                cursor: pointer; transition: all 0.2s;
+            }
+            .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.35); }
+
+            .btn-secondary {
+                display: inline-flex; align-items: center; gap: 8px;
+                padding: 8px 14px; background: var(--glass); border: 1px solid var(--border);
+                color: var(--text-mute); border-radius: 8px; font-size: 0.8rem;
+                text-decoration: none; transition: all 0.2s;
+            }
+            .btn-secondary:hover { color: var(--text-main); background: rgba(99,102,241,0.15); }
+
+            .btn-sm { padding: 6px 12px; font-size: 0.78rem; border-radius: 8px; }
+            .btn-edit { background: rgba(14,165,233,0.15); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); text-decoration: none; }
+            .btn-edit:hover { background: rgba(14,165,233,0.3); }
+            .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); text-decoration: none; cursor: pointer; }
+            .btn-danger:hover { background: rgba(239,68,68,0.3); }
+
+            /* Badges */
+            .badge {
+                display: inline-block; padding: 4px 10px; border-radius: 20px;
+                font-size: 0.72rem; font-weight: 600;
+            }
+            .badge-active   { background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+            .badge-pending  { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+            .badge-inactive { background: rgba(239,68,68,0.18);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+            .badge-info     { background: rgba(14,165,233,0.18); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); }
+
+            /* Forms styling */
+            .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+            .form-group { margin-bottom: 20px; }
+            .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-mute); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+            .form-control, select.form-control, textarea.form-control {
+                width: 100%; padding: 12px 16px; background: rgba(15,23,42,0.8);
+                border: 1px solid var(--border); border-radius: 10px; color: var(--text-main);
+                font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: all 0.2s;
+            }
+            .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.18); }
+            select.form-control option { background: var(--dark-mid); color: var(--text-main); }
+
+            /* Footer */
+            .app-footer { padding: 20px 32px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-mute); text-align: center; margin-top: auto; }
+        </style>
         {% block stylesheets %}{% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-
-
-        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphp_hot_reload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        <script src="https://cdn.jsdelivr.net/npm/preline@2.4.0"></script>
-        <script src="https://tailwindcss.com"></script>
-        {% endif %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+
+        <div class="{% if app.user %}app-layout{% else %}auth-layout{% endif %}">
+            {% if app.user %}
+            {# SIDEBAR #}
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">⚡</div>
+                    <div class="logo-text">
+                        <strong>ERP Portal</strong>
+                        <span>Enterprise Portal</span>
+                    </div>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <div class="nav-section-title">Main</div>
+                    <a href="{{ path('app_home') }}" class="nav-link">
+                        <i class="fa-solid fa-house-chimney"></i> Dashboard
+                    </a>
+                    {% if is_granted('ROLE_HR') %}
+                    <a href="{{ path('app_employee_index') }}" class="nav-link">
+                        <i class="fa-solid fa-users"></i> Employees
+                    </a>
+                    <a href="{{ path('app_department_index') }}" class="nav-link">
+                        <i class="fa-solid fa-building"></i> Departments
+                    </a>
+                    {% endif %}
+
+                    <div class="nav-section-title">HR & Operations</div>
+                    <a href="{{ path('app_attendance_index') }}" class="nav-link">
+                        <i class="fa-solid fa-calendar-check"></i> Attendance
+                    </a>
+                    <a href="{{ path('app_leave_request_index') }}" class="nav-link">
+                        <i class="fa-solid fa-plane-departure"></i> Leave Requests
+                    </a>
+                    {% if is_granted('ROLE_HR') %}
+                    <a href="{{ path('app_salary_index') }}" class="nav-link">
+                        <i class="fa-solid fa-money-bill-wave"></i> Salary
+                    </a>
+                    {% endif %}
+
+                    <div class="nav-section-title">Projects</div>
+                    <a href="{{ path('app_project_index') }}" class="nav-link">
+                        <i class="fa-solid fa-diagram-project"></i> Projects
+                    </a>
+                    <a href="{{ path('app_task_index') }}" class="nav-link">
+                        <i class="fa-solid fa-list-check"></i> Tasks
+                    </a>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <div class="nav-section-title">Admin</div>
+                    <a href="{{ path('app_register') }}" class="nav-link">
+                        <i class="fa-solid fa-user-plus"></i> Register User
+                    </a>
+                    {% endif %}
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            {{ app.user ? app.user.email|slice(0,1)|upper : '?' }}
+                        </div>
+                        <div class="user-info">
+                            <strong>{{ app.user.email }}</strong>
+                            <span>{{ app.user.roles|join(', ')|replace({'ROLE_': '', '_': ' '})|capitalize }}</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            {% endif %}
+
+            {# MAIN CONTENT #}
+            <main class="{% if app.user %}main-content{% else %}main-auth-content{% endif %}">
+                {% if app.user %}
+                <header class="topbar">
+                    <div class="page-title-wrap">
+                        <h1>{% block page_heading %}Dashboard{% endblock %}</h1>
+                        <p>{% block page_subheading %}{{ "now"|date("l, d F Y") }}{% endblock %}</p>
+                    </div>
+                    <div class="topbar-actions">
+                        <a href="{{ path('app_logout') }}" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
+                    </div>
+                </header>
+                {% endif %}
+
+                <div class="content-wrapper">
+                    {# Flash Notifications #}
+                    <div class="flash-container">
+                        {% for type, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ type == 'error' ? 'danger' : type }}">
+                                    <i class="fa-solid fa-circle-info"></i> {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+
+                    {% block body %}{% endblock %}
+                </div>
+
+                {% if app.user %}
+                <footer class="app-footer">
+                    © {{ "now"|date("Y") }} ERP Portal — Powered by Symfony. All rights reserved.
+                </footer>
+                {% endif %}
+            </main>
+        </div>
+
+        {% block javascripts %}{% endblock %}
     </body>
 </html>

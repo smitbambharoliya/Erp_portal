@@ -1,11 +1,83 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Employee{% endblock %}
+{% block title %}New Employee — ERP Portal{% endblock %}
+{% block page_heading %}Add New Employee{% endblock %}
+{% block page_subheading %}Fill in personnel details to add an employee to the system{% endblock %}
 
 {% block body %}
-    <h1>Create new Employee</h1>
+<div class="card-panel" style="max-width:800px; margin:0 auto;">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-user-plus" style="margin-right:8px; color:var(--primary);"></i> Employee Information</h2>
+        <a href="{{ path('app_employee_index') }}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    {{ include('employee/_form.html.twig') }}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="form-grid">
+            <div class="form-group">
+                {{ form_label(form.firstName) }}
+                {{ form_widget(form.firstName) }}
+                {{ form_errors(form.firstName) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.lastName) }}
+                {{ form_widget(form.lastName) }}
+                {{ form_errors(form.lastName) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.phone) }}
+                {{ form_widget(form.phone) }}
+                {{ form_errors(form.phone) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.designation) }}
+                {{ form_widget(form.designation) }}
+                {{ form_errors(form.designation) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.department) }}
+                {{ form_widget(form.department) }}
+                {{ form_errors(form.department) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.status) }}
+                {{ form_widget(form.status) }}
+                {{ form_errors(form.status) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.user) }}
+                {{ form_widget(form.user) }}
+                {{ form_errors(form.user) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.gender) }}
+                {{ form_widget(form.gender) }}
+                {{ form_errors(form.gender) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.dateOfBirth) }}
+                {{ form_widget(form.dateOfBirth) }}
+                {{ form_errors(form.dateOfBirth) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.joiningDate) }}
+                {{ form_widget(form.joiningDate) }}
+                {{ form_errors(form.joiningDate) }}
+            </div>
+        </div>
 
-    <a href="{{ path('app_employee_index') }}">back to list</a>
+        <div class="form-group" style="grid-column: span 2;">
+            {{ form_label(form.address) }}
+            {{ form_widget(form.address) }}
+            {{ form_errors(form.address) }}
+        </div>
+
+        <div style="margin-top:20px; text-align:right;">
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-check"></i> Save Employee
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
 {% endblock %}

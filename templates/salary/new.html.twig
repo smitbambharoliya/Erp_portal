@@ -1,11 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Salary{% endblock %}
+{% block title %}Add Salary Slip — ERP Portal{% endblock %}
+{% block page_heading %}Add Salary Slip{% endblock %}
 
 {% block body %}
-    <h1>Create new Salary</h1>
+<div class="card-panel" style="max-width:650px; margin:0 auto;">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-receipt" style="margin-right:8px; color:#fb7185;"></i> Salary Slip Details</h2>
+        <a href="{{ path('app_salary_index') }}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    {{ include('salary/_form.html.twig') }}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="form-grid">
+            <div class="form-group">
+                {{ form_label(form.employee) }}
+                {{ form_widget(form.employee) }}
+                {{ form_errors(form.employee) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.basicSalary) }}
+                {{ form_widget(form.basicSalary) }}
+                {{ form_errors(form.basicSalary) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.allowances) }}
+                {{ form_widget(form.allowances) }}
+                {{ form_errors(form.allowances) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.deductions) }}
+                {{ form_widget(form.deductions) }}
+                {{ form_errors(form.deductions) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.netSalary) }}
+                {{ form_widget(form.netSalary) }}
+                {{ form_errors(form.netSalary) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.paymentDate) }}
+                {{ form_widget(form.paymentDate) }}
+                {{ form_errors(form.paymentDate) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.status) }}
+                {{ form_widget(form.status) }}
+                {{ form_errors(form.status) }}
+            </div>
+        </div>
 
-    <a href="{{ path('app_salary_index') }}">back to list</a>
+        <div style="margin-top:20px; text-align:right;">
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-check"></i> Save Salary Record
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
 {% endblock %}

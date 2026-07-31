@@ -1,53 +1,83 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Employee index{% endblock %}
+{% block title %}Employees — ERP Portal{% endblock %}
+{% block page_heading %}Employee Management{% endblock %}
+{% block page_subheading %}Manage all company staff and personnel details{% endblock %}
 
 {% block body %}
-    <h1>Employee index</h1>
+<div class="card-panel">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-users" style="margin-right:8px; color:var(--primary);"></i> Employee Directory</h2>
+        {% if is_granted('ROLE_HR') %}
+        <a href="{{ path('app_employee_new') }}" class="btn-primary">
+            <i class="fa-solid fa-user-plus"></i> Add New Employee
+        </a>
+        {% endif %}
+    </div>
 
-    <table class="table text-blue-500 border-2 border-blue-500 w-full bg-white center">
-        <thead>
-            <tr>
-                <th class="text-blue-500">FirstName</th>
-                <th class="text-blue-500">LastName</th>
-                <th class="text-blue-500">Phone</th>
-                <th class="text-blue-500">Address</th>
-                <th class="text-blue-500">DateOfBirth</th>
-                <th class="text-blue-500">Gender</th>
-                <th class="text-blue-500">JoiningDate</th>
-                <th class="text-blue-500">Designation</th>
-                <th class="text-blue-500">Status</th>
-                <th class="text-blue-500">CreatedAt</th>
-                <th class="text-blue-500">UpdatedAt</th>
-                <th class="text-blue-500">actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for employee in employees %}
-            <tr>
-                <td>{{ employee.firstName }}</td>
-                <td>{{ employee.lastName }}</td>
-                <td>{{ employee.phone }}</td>
-                <td>{{ employee.address }}</td>
-                <td>{{ employee.dateOfBirth }}</td>
-                <td>{{ employee.gender }}</td>
-                <td>{{ employee.joiningDate }}</td>
-                <td>{{ employee.designation }}</td>
-                <td>{{ employee.status }}</td>
-                <td>{{ employee.createdAt ? employee.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ employee.updatedAt ? employee.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_employee_show', {'id': employee.id}) }}">show</a>
-                    <a href="{{ path('app_employee_edit', {'id': employee.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="13">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_employee_new') }}">Create new</a>
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Department</th>
+                    <th>Phone</th>
+                    <th>Joining Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for employee in employees %}
+                <tr>
+                    <td><strong>#{{ employee.id }}</strong></td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:32px; height:32px; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem;">
+                                {{ employee.firstName|slice(0,1)|upper }}
+                            </div>
+                            <div>
+                                <strong>{{ employee.firstName }} {{ employee.lastName }}</strong>
+                                {% if employee.user %}<div style="font-size:0.72rem; color:var(--text-mute);">{{ employee.user.email }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ employee.designation ?? 'N/A' }}</td>
+                    <td>
+                        {% if employee.department %}
+                            <span class="badge badge-info"><i class="fa-solid fa-building" style="margin-right:4px;"></i>{{ employee.department.name }}</span>
+                        {% else %}
+                            <span style="color:var(--text-mute);">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ employee.phone ?? '-' }}</td>
+                    <td>{{ employee.joiningDate ?? '-' }}</td>
+                    <td>
+                        <span class="badge {{ employee.status == 'Active' ? 'badge-active' : 'badge-inactive' }}">
+                            {{ employee.status ?? 'Active' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ path('app_employee_show', {'id': employee.id}) }}" class="btn-secondary btn-sm" title="View"><i class="fa-solid fa-eye"></i></a>
+                            {% if is_granted('ROLE_HR') %}
+                            <a href="{{ path('app_employee_edit', {'id': employee.id}) }}" class="btn-edit btn-sm" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8" style="text-align:center; padding:40px; color:var(--text-mute);">
+                        <i class="fa-solid fa-users-slash" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+                        No employee records found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

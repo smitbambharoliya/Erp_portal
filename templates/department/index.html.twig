@@ -1,41 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Department index{% endblock %}
+{% block title %}Departments — ERP Portal{% endblock %}
+{% block page_heading %}Departments{% endblock %}
+{% block page_subheading %}Manage company departments and organization structure{% endblock %}
 
 {% block body %}
-    <h1>Department index</h1>
+<div class="card-panel">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-building" style="margin-right:8px; color:var(--secondary);"></i> Department Directory</h2>
+        {% if is_granted('ROLE_HR') %}
+        <a href="{{ path('app_department_new') }}" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Department
+        </a>
+        {% endif %}
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for department in departments %}
-            <tr>
-                <td>{{ department.id }}</td>
-                <td>{{ department.name }}</td>
-                <td>{{ department.description }}</td>
-                <td>{{ department.createdAt ? department.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ department.updatedAt ? department.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_department_show', {'id': department.id}) }}">show</a>
-                    <a href="{{ path('app_department_edit', {'id': department.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_department_new') }}">Create new</a>
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Department Name</th>
+                    <th>Description</th>
+                    <th>Total Staff</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for department in departments %}
+                <tr>
+                    <td><strong>#{{ department.id }}</strong></td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:34px; height:34px; background:rgba(14,165,233,0.18); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--secondary);">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                            <strong>{{ department.name }}</strong>
+                        </div>
+                    </td>
+                    <td>{{ department.description ?? 'No description' }}</td>
+                    <td>
+                        <span class="badge badge-info">
+                            <i class="fa-solid fa-users" style="margin-right:4px;"></i> {{ department.employees|length }} Members
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ path('app_department_show', {'id': department.id}) }}" class="btn-secondary btn-sm"><i class="fa-solid fa-eye"></i> View</a>
+                            {% if is_granted('ROLE_HR') %}
+                            <a href="{{ path('app_department_edit', {'id': department.id}) }}" class="btn-edit btn-sm"><i class="fa-solid fa-pen"></i> Edit</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" style="text-align:center; padding:40px; color:var(--text-mute);">
+                        <i class="fa-solid fa-building-circle-exclamation" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+                        No department records found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\LeaveRequest;
+use App\Entity\User;
 use App\Form\LeaveRequestType;
 use App\Repository\LeaveRequestRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,21 +20,39 @@ final class LeaveRequestController extends AbstractController
     #[Route(name: 'app_leave_request_index', methods: ['GET'])]
     public function index(LeaveRequestRepository $leaveRequestRepository): Response
     {
+        /** @var User|null $user */
+        $user = $this->getUser();
+
+        if ($this->isGranted('ROLE_HR')) {
+            $leaves = $leaveRequestRepository->findAll();
+        } else {
+            $employee = $user?->getEmployee();
+            $leaves = $leaveRequestRepository->findBy(['employee' => $employee]);
+        }
         return $this->render('leave_request/index.html.twig', [
-            'leave_requests' => $leaveRequestRepository->findAll(),
+            'leave_requests' => $leaves,
         ]);
     }
 
     #[Route('/new', name: 'app_leave_request_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request,
+     EntityManagerInterface $entityManager
+     ): Response
     {
         $leaveRequest = new LeaveRequest();
+
         $form = $this->createForm(LeaveRequestType::class, $leaveRequest);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var User|null $user */
+            $user = $this->getUser();
+            $leaveRequest->setEmployee($user->getEmployee());
+            $leaveRequest->setStatus("Pending");
+            $leaveRequest->setCreatedAt(new \DateTimeImmutable());
             $entityManager->persist($leaveRequest);
             $entityManager->flush();
+            $this->addFlash('success', 'Leave request created successfully!');
 
             return $this->redirectToRoute('app_leave_request_index', [], Response::HTTP_SEE_OTHER);
         }

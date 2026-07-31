@@ -1,38 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Department{% endblock %}
+{% block title %}{{ department.name }} Department — ERP Portal{% endblock %}
+{% block page_heading %}{{ department.name }} Department{% endblock %}
+{% block page_subheading %}Department details and staff list{% endblock %}
 
 {% block body %}
-    <h1>Department</h1>
+<div class="card-panel">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-building" style="margin-right:8px; color:var(--secondary);"></i> {{ department.name }} Overview</h2>
+        <div>
+            <a href="{{ path('app_department_index') }}" class="btn-secondary" style="margin-right:8px;">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+            {% if is_granted('ROLE_HR') %}
+            <a href="{{ path('app_department_edit', {'id': department.id}) }}" class="btn-primary">
+                <i class="fa-solid fa-pen"></i> Edit
+            </a>
+            {% endif %}
+        </div>
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ department.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ department.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ department.description }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ department.createdAt ? department.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ department.updatedAt ? department.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <p style="color:var(--text-mute); margin-bottom:24px; font-size:0.95rem;">
+        {{ department.description ?? 'No description available for this department.' }}
+    </p>
 
-    <a href="{{ path('app_department_index') }}">back to list</a>
+    <h3 style="font-size:1rem; font-weight:700; margin-bottom:16px;">Assigned Employees ({{ department.employees|length }})</h3>
 
-    <a href="{{ path('app_department_edit', {'id': department.id}) }}">edit</a>
-
-    {{ include('department/_delete_form.html.twig') }}
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for employee in department.employees %}
+                <tr>
+                    <td>#{{ employee.id }}</td>
+                    <td><strong>{{ employee.firstName }} {{ employee.lastName }}</strong></td>
+                    <td>{{ employee.designation ?? '-' }}</td>
+                    <td>{{ employee.phone ?? '-' }}</td>
+                    <td><span class="badge badge-active">{{ employee.status ?? 'Active' }}</span></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" style="text-align:center; padding:30px; color:var(--text-mute);">
+                        No employees currently assigned to this department.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

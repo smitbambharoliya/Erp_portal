@@ -1,47 +1,64 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Project index{% endblock %}
+{% block title %}Projects — ERP Portal{% endblock %}
+{% block page_heading %}Project Management{% endblock %}
+{% block page_subheading %}Track company projects, timelines, and budgets{% endblock %}
 
 {% block body %}
-    <h1>Project index</h1>
+<div class="card-panel">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-diagram-project" style="margin-right:8px; color:#a78bfa;"></i> Active Projects</h2>
+        <a href="{{ path('app_project_new') }}" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> New Project
+        </a>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>StartDate</th>
-                <th>EndDate</th>
-                <th>Status</th>
-                <th>Budget</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for project in projects %}
-            <tr>
-                <td>{{ project.id }}</td>
-                <td>{{ project.name }}</td>
-                <td>{{ project.description }}</td>
-                <td>{{ project.startDate }}</td>
-                <td>{{ project.endDate }}</td>
-                <td>{{ project.status }}</td>
-                <td>{{ project.budget }}</td>
-                <td>{{ project.createdAt ? project.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_project_show', {'id': project.id}) }}">show</a>
-                    <a href="{{ path('app_project_edit', {'id': project.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_project_new') }}">Create new</a>
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Project Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Budget</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for project in projects %}
+                <tr>
+                    <td><strong>#{{ project.id }}</strong></td>
+                    <td>
+                        <strong>{{ project.name }}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-mute);">{{ project.description|slice(0, 45) ~ '...' }}</div>
+                    </td>
+                    <td>{{ project.startDate ?? '-' }}</td>
+                    <td>{{ project.endDate ?? '-' }}</td>
+                    <td>₹{{ project.budget ?? 0 }}</td>
+                    <td>
+                        <span class="badge {{ project.status == 'Completed' ? 'badge-active' : (project.status == 'In Progress' ? 'badge-info' : 'badge-pending') }}">
+                            {{ project.status ?? 'Active' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ path('app_project_show', {'id': project.id}) }}" class="btn-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                            <a href="{{ path('app_project_edit', {'id': project.id}) }}" class="btn-edit btn-sm"><i class="fa-solid fa-pen"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:40px; color:var(--text-mute);">
+                        <i class="fa-solid fa-folder-open" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+                        No project records found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

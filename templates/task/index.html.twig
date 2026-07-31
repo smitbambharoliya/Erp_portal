@@ -1,45 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Task index{% endblock %}
+{% block title %}Tasks — ERP Portal{% endblock %}
+{% block page_heading %}Task Management{% endblock %}
+{% block page_subheading %}Track tasks, assignments, deadlines, and progress{% endblock %}
 
 {% block body %}
-    <h1>Task index</h1>
+<div class="card-panel">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-list-check" style="margin-right:8px; color:var(--secondary);"></i> All Tasks</h2>
+        <a href="{{ path('app_task_new') }}" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Create Task
+        </a>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Deadline</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for task in tasks %}
-            <tr>
-                <td>{{ task.id }}</td>
-                <td>{{ task.title }}</td>
-                <td>{{ task.description }}</td>
-                <td>{{ task.priority }}</td>
-                <td>{{ task.status }}</td>
-                <td>{{ task.deadline }}</td>
-                <td>{{ task.createdAt ? task.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_task_show', {'id': task.id}) }}">show</a>
-                    <a href="{{ path('app_task_edit', {'id': task.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_task_new') }}">Create new</a>
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Task Title</th>
+                    <th>Priority</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td><strong>#{{ task.id }}</strong></td>
+                    <td>
+                        <strong>{{ task.title }}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-mute);">{{ task.description|slice(0, 45) ~ '...' }}</div>
+                    </td>
+                    <td>
+                        {% if task.priority == 'High' %}
+                            <span class="badge badge-inactive">High</span>
+                        {% elseif task.priority == 'Medium' %}
+                            <span class="badge badge-pending">Medium</span>
+                        {% else %}
+                            <span class="badge badge-info">Low</span>
+                        {% endif %}
+                    </td>
+                    <td><i class="fa-regular fa-clock" style="margin-right:4px; color:var(--text-mute);"></i> {{ task.deadline ?? '-' }}</td>
+                    <td>
+                        <span class="badge {{ task.status == 'Completed' ? 'badge-active' : 'badge-pending' }}">
+                            {{ task.status ?? 'Pending' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ path('app_task_show', {'id': task.id}) }}" class="btn-secondary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                            <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn-edit btn-sm"><i class="fa-solid fa-pen"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:40px; color:var(--text-mute);">
+                        <i class="fa-solid fa-tasks" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+                        No tasks found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

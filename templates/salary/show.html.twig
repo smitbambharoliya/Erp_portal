@@ -1,54 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Salary{% endblock %}
+{% block title %}Salary Slip Details — ERP Portal{% endblock %}
+{% block page_heading %}Salary Slip #{{ salary.id }}{% endblock %}
 
 {% block body %}
-    <h1>Salary</h1>
+<div class="card-panel" style="max-width:600px; margin:0 auto;">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-file-invoice-dollar" style="margin-right:8px; color:#fb7185;"></i> Payslip Summary</h2>
+        <a href="{{ path('app_salary_index') }}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    <table class="table">
+    <table class="custom-table" style="margin-top:16px;">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ salary.id }}</td>
+                <th style="width:40%;">Employee</th>
+                <td><strong>{{ salary.employee ? salary.employee.firstName ~ ' ' ~ salary.employee.lastName : 'Unknown' }}</strong></td>
             </tr>
             <tr>
-                <th>Month</th>
-                <td>{{ salary.month }}</td>
+                <th>Basic Salary</th>
+                <td>₹{{ salary.basicSalary ?? 0 }}</td>
             </tr>
             <tr>
-                <th>Year</th>
-                <td>{{ salary.year }}</td>
+                <th>Allowances</th>
+                <td>+ ₹{{ salary.allowances ?? 0 }}</td>
             </tr>
             <tr>
-                <th>BasicSalary</th>
-                <td>{{ salary.basicSalary }}</td>
+                <th>Deductions</th>
+                <td>- ₹{{ salary.deductions ?? 0 }}</td>
             </tr>
             <tr>
-                <th>Bonus</th>
-                <td>{{ salary.bonus }}</td>
+                <th>Net Payable Amount</th>
+                <td><strong style="color:#34d399; font-size:1.1rem;">₹{{ salary.netSalary ?? 0 }}</strong></td>
             </tr>
             <tr>
-                <th>Deduction</th>
-                <td>{{ salary.deduction }}</td>
+                <th>Payment Date</th>
+                <td>{{ salary.paymentDate ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <th>NetSalary</th>
-                <td>{{ salary.netSalary }}</td>
-            </tr>
-            <tr>
-                <th>PaymentStatus</th>
-                <td>{{ salary.paymentStatus }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ salary.createdAt ? salary.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <th>Status</th>
+                <td>
+                    <span class="badge {{ salary.status == 'Paid' ? 'badge-active' : 'badge-pending' }}">
+                        {{ salary.status ?? 'Pending' }}
+                    </span>
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_salary_index') }}">back to list</a>
-
-    <a href="{{ path('app_salary_edit', {'id': salary.id}) }}">edit</a>
-
-    {{ include('salary/_delete_form.html.twig') }}
+    {% if is_granted('ROLE_HR') %}
+    <div style="margin-top:24px; text-align:right;">
+        <a href="{{ path('app_salary_edit', {'id': salary.id}) }}" class="btn-primary">
+            <i class="fa-solid fa-pen"></i> Edit Record
+        </a>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

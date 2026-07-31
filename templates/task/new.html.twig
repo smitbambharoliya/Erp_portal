@@ -1,11 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Task{% endblock %}
+{% block title %}Create Task — ERP Portal{% endblock %}
+{% block page_heading %}Create Task{% endblock %}
 
 {% block body %}
-    <h1>Create new Task</h1>
+<div class="card-panel" style="max-width:650px; margin:0 auto;">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-list-check" style="margin-right:8px; color:var(--secondary);"></i> Task Details</h2>
+        <a href="{{ path('app_task_index') }}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    {{ include('task/_form.html.twig') }}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="form-group">
+            {{ form_label(form.title) }}
+            {{ form_widget(form.title) }}
+            {{ form_errors(form.title) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+            {{ form_errors(form.description) }}
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                {{ form_label(form.priority) }}
+                {{ form_widget(form.priority) }}
+                {{ form_errors(form.priority) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.status) }}
+                {{ form_widget(form.status) }}
+                {{ form_errors(form.status) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.deadline) }}
+                {{ form_widget(form.deadline) }}
+                {{ form_errors(form.deadline) }}
+            </div>
+        </div>
 
-    <a href="{{ path('app_task_index') }}">back to list</a>
+        <div style="margin-top:20px; text-align:right;">
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-check"></i> Create Task
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
 {% endblock %}

@@ -1,46 +1,50 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Task{% endblock %}
+{% block title %}{{ task.title }} — ERP Portal{% endblock %}
+{% block page_heading %}{{ task.title }}{% endblock %}
 
 {% block body %}
-    <h1>Task</h1>
+<div class="card-panel" style="max-width:600px; margin:0 auto;">
+    <div class="card-header-flex">
+        <h2><i class="fa-solid fa-list-check" style="margin-right:8px; color:var(--secondary);"></i> Task #{{ task.id }} Details</h2>
+        <a href="{{ path('app_task_index') }}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+        </a>
+    </div>
 
-    <table class="table">
+    <table class="custom-table" style="margin-top:16px;">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ task.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ task.title }}</td>
+                <th style="width:35%;">Title</th>
+                <td><strong>{{ task.title }}</strong></td>
             </tr>
             <tr>
                 <th>Description</th>
-                <td>{{ task.description }}</td>
+                <td>{{ task.description ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <th>Priority</th>
-                <td>{{ task.priority }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>{{ task.status }}</td>
+                <td>
+                    <span class="badge {{ task.priority == 'High' ? 'badge-inactive' : 'badge-info' }}">{{ task.priority ?? 'Normal' }}</span>
+                </td>
             </tr>
             <tr>
                 <th>Deadline</th>
-                <td>{{ task.deadline }}</td>
+                <td>{{ task.deadline ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <th>CreatedAt</th>
-                <td>{{ task.createdAt ? task.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <th>Status</th>
+                <td>
+                    <span class="badge {{ task.status == 'Completed' ? 'badge-active' : 'badge-pending' }}">{{ task.status ?? 'Pending' }}</span>
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_task_index') }}">back to list</a>
-
-    <a href="{{ path('app_task_edit', {'id': task.id}) }}">edit</a>
-
-    {{ include('task/_delete_form.html.twig') }}
+    <div style="margin-top:24px; text-align:right;">
+        <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn-primary">
+            <i class="fa-solid fa-pen"></i> Edit Task
+        </a>
+    </div>
+</div>
 {% endblock %}
