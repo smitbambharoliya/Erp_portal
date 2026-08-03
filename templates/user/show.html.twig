@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Profile {{ user.email }} — CoreUI ERP Portal{% endblock %}
+{% block page_heading %}User Profile{% endblock %}
+
+{% block body %}
+<div class="card" style="max-width:650px; margin:0 auto;">
+    <div class="card-header">
+        <div style="display:flex; align-items:center; gap:16px;">
+            {% if user.profilePic %}
+                <img src="{{ asset('uploads/profile_pics/' ~ user.profilePic) }}" alt="Avatar" style="width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+            {% else %}
+                <div style="width:56px; height:56px; border-radius:50%; background-color:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.5rem;">
+                    {{ user.email|slice(0,1)|upper }}
+                </div>
+            {% endif %}
+            <div>
+                <h5 style="margin:0;">{{ user.email }}</h5>
+                <div style="font-size:0.85rem; color:var(--text-mute);">
+                    {% for role in user.roles %}
+                        {{ role }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <a href="{{ path('app_user_index') }}" class="btn btn-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Back to Users
+        </a>
+    </div>
+
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width:30%;">User ID</th>
+                        <td>#{{ user.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email Address</th>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Account Role</th>
+                        <td>
+                            {% for role in user.roles %}
+                                {% if role == 'ROLE_ADMIN' %}
+                                    <span class="badge badge-danger"><i class="fa-solid fa-shield-halved"></i> Administrator</span>
+                                {% elseif role == 'ROLE_HR' %}
+                                    <span class="badge badge-warning"><i class="fa-solid fa-user-tie"></i> HR Manager</span>
+                                {% else %}
+                                    <span class="badge badge-info"><i class="fa-solid fa-user"></i> Employee</span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Linked Employee</th>
+                        <td>
+                            {% if user.employee %}
+                                <a href="{{ path('app_employee_show', {'id': user.employee.id}) }}">
+                                    {{ user.employee.firstName }} {{ user.employee.lastName }}
+                                </a>
+                            {% else %}
+                                <span style="color:var(--text-mute);">None</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Account Created</th>
+                        <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if is_granted('ROLE_HR') %}
+    <div style="padding:16px 20px; text-align:right; border-top:1px solid var(--border-color);">
+        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary">
+            <i class="fa-solid fa-pen"></i> Edit User Account
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

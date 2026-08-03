@@ -287,6 +287,9 @@
 
                     {% if is_granted('ROLE_HR') %}
                     <div class="nav-title">Management</div>
+                    <a href="{{ path('app_user_index') }}" class="nav-link">
+                        <i class="fa-solid fa-users-gear"></i> User Accounts
+                    </a>
                     <a href="{{ path('app_employee_index') }}" class="nav-link">
                         <i class="fa-solid fa-users"></i> Employees
                     </a>
@@ -325,8 +328,12 @@
                 </nav>
 
                 <div class="sidebar-footer">
-                    <div class="sidebar-user-avatar">
-                        {{ app.user ? app.user.email|slice(0,1)|upper : 'U' }}
+                    <div class="sidebar-user-avatar" style="overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                        {% if app.user and app.user.profilePic %}
+                            <img src="{{ asset('uploads/profile_pics/' ~ app.user.profilePic) }}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                        {% else %}
+                            {{ app.user ? app.user.email|slice(0,1)|upper : 'U' }}
+                        {% endif %}
                     </div>
                     <div class="sidebar-user-info">
                         <strong>{{ app.user.email }}</strong>

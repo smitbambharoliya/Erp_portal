@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Accounts — CoreUI ERP Portal{% endblock %}
+{% block page_heading %}User Accounts Management{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h5><i class="fa-solid fa-users-gear" style="margin-right:8px; color:var(--primary);"></i> Registered Users</h5>
+        {% if is_granted('ROLE_HR') %}
+        <a href="{{ path('app_user_new') }}" class="btn btn-primary">
+            <i class="fa-solid fa-user-plus"></i> Create User Account
+        </a>
+        {% endif %}
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Linked Employee</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td style="width:60px; text-align:center;">
+                            {% if user.profilePic %}
+                                <img src="{{ asset('uploads/profile_pics/' ~ user.profilePic) }}" alt="Avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
+                            {% else %}
+                                <div style="width:40px; height:40px; border-radius:50%; background-color:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.1rem; margin:0 auto;">
+                                    {{ user.email|slice(0,1)|upper }}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td><strong>#{{ user.id }}</strong></td>
+                        <td><strong>{{ user.email }}</strong></td>
+                        <td>
+                            {% for role in user.roles %}
+                                {% if role == 'ROLE_ADMIN' %}
+                                    <span class="badge badge-danger"><i class="fa-solid fa-shield-halved"></i> Admin</span>
+                                {% elseif role == 'ROLE_HR' %}
+                                    <span class="badge badge-warning"><i class="fa-solid fa-user-tie"></i> HR Manager</span>
+                                {% else %}
+                                    <span class="badge badge-info"><i class="fa-solid fa-user"></i> Employee</span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if user.employee %}
+                                <a href="{{ path('app_employee_show', {'id': user.employee.id}) }}">
+                                    {{ user.employee.firstName }} {{ user.employee.lastName }}
+                                </a>
+                            {% else %}
+                                <span style="color:var(--text-mute);">Unlinked</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm btn-secondary" title="View"><i class="fa-solid fa-eye"></i></a>
+                            {% if is_granted('ROLE_HR') %}
+                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:40px; color:var(--text-mute);">
+                            No user accounts found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
