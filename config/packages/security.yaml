@@ -51,8 +51,8 @@ security:
         - { path: ^/login,    roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
 
-        # Salary - sirf ROLE_HR ane upar
-        - { path: ^/salary,   roles: ROLE_HR }
+        # Salary Slips - ROLE_EMPLOYEE
+        - { path: ^/salary,   roles: ROLE_EMPLOYEE }
 
         # Employee Dashboard & Profile view - ROLE_EMPLOYEE
         - { path: ^/employee/deshboard, roles: ROLE_EMPLOYEE }

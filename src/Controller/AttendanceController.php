@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Attendance;
+use App\Entity\Employee;
 use App\Entity\User;
 use App\Event\AttendanceCheckedOutEvent;
 use App\Form\AttendanceType;
@@ -22,11 +23,11 @@ final class AttendanceController extends AbstractController
     {
         /** @var User|null $user */
         $user = $this->getUser();
-        if ($this->isGranted('ROLE_HR')) {
-            $attendance = $attendanceRepository->findAll();
+        if ($this->isGranted('ROLE_HR') || $this->isGranted('ROLE_ADMIN')) {
+            $attendance = $attendanceRepository->findBy([], ['id' => 'DESC']);
         } else {
             $employee = $user?->getEmployee();
-            $attendance = $attendanceRepository->findBy(['employee' => $employee]);
+            $attendance = $employee ? $attendanceRepository->findBy(['employee' => $employee], ['id' => 'DESC']) : [];
         }
         return $this->render('attendance/index.html.twig', [
             'attendances' => $attendance,
@@ -122,10 +123,43 @@ final class AttendanceController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_attendance_show', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function show(Attendance $attendance): Response
+    public function show(Attendance $attendance, AttendanceRepository $attendanceRepository): Response
     {
+        /** @var User|null $currentUser */
+        $currentUser = $this->getUser();
+        $employee = $attendance->getEmployee();
+
+        // HR & Admin can view any attendance details. Regular employees can only view their own.
+        if (!$this->isGranted('ROLE_HR') && !$this->isGranted('ROLE_ADMIN') && $employee && $employee->getUser() !== $currentUser) {
+            $this->addFlash('danger', 'You can only view your own attendance details.');
+            return $this->redirectToRoute('app_attendance_index');
+        }
+
+        $attendances = $employee ? $attendanceRepository->findBy(['employee' => $employee], ['id' => 'DESC']) : [$attendance];
+
+        $presentCount = 0;
+        $absentCount = 0;
+        $lateCount = 0;
+
+        foreach ($attendances as $att) {
+            $st = strtolower((string)$att->getStatus());
+            if ($st === 'present') {
+                $presentCount++;
+            } elseif ($st === 'absent') {
+                $absentCount++;
+            } elseif ($st === 'late') {
+                $lateCount++;
+            }
+        }
+
         return $this->render('attendance/show.html.twig', [
-            'attendance' => $attendance,
+            'attendance'     => $attendance,
+            'targetEmployee' => $employee,
+            'attendances'    => $attendances,
+            'presentCount'   => $presentCount,
+            'absentCount'    => $absentCount,
+            'lateCount'      => $lateCount,
+            'totalCount'     => count($attendances),
         ]);
     }
 

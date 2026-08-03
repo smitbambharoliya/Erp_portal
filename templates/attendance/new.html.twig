@@ -1,51 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mark Attendance — CoreUI ERP Portal{% endblock %}
-{% block page_heading %}Mark Attendance{% endblock %}
+{% block title %}Manual Attendance Entry — HR Portal{% endblock %}
+{% block page_heading %}Manual Attendance Entry{% endblock %}
 
 {% block body %}
-<div class="card" style="max-width:650px; margin:0 auto;">
-    <div class="card-header">
-        <h5><i class="fa-solid fa-clock" style="margin-right:8px; color:var(--success);"></i> Attendance Entry</h5>
-        <a href="{{ path('app_attendance_index') }}" class="btn btn-secondary btn-sm">
+<div class="card" style="max-width:700px; margin:0 auto; border-radius:12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow:hidden;">
+    <div class="card-header" style="background:#ffffff; padding:20px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h4 style="margin:0; font-weight:800; color:#1e293b;"><i class="fa-solid fa-calendar-plus" style="margin-right:10px; color:var(--success);"></i> Manual Attendance Entry</h4>
+            <span style="font-size:0.85rem; color:#64748b;">HR can manually add or correct an employee's attendance record.</span>
+        </div>
+        <a href="{{ path('app_attendance_index') }}" class="btn btn-secondary btn-sm" style="padding:8px 16px; border-radius:6px;">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    <div class="card-body">
+    <div class="card-body" style="padding:28px;">
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-            <div class="form-grid">
-                {% if form.employee is defined %}
-                <div class="form-group">
-                    {{ form_label(form.employee) }}
+            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;">
+                <div style="grid-column: span 2;">
+                    {{ form_label(form.employee, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.employee) }}
                     {{ form_errors(form.employee) }}
                 </div>
-                {% endif %}
-                <div class="form-group">
-                    {{ form_label(form.date) }}
+                <div style="grid-column: span 2;">
+                    {{ form_label(form.date, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.date) }}
                     {{ form_errors(form.date) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.checkIn) }}
+                <div>
+                    {{ form_label(form.checkIn, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.checkIn) }}
                     {{ form_errors(form.checkIn) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.checkOut) }}
+                <div>
+                    {{ form_label(form.checkOut, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.checkOut) }}
                     {{ form_errors(form.checkOut) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.status) }}
+                <div>
+                    {{ form_label(form.status, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.status) }}
                     {{ form_errors(form.status) }}
                 </div>
+                <div>
+                    {{ form_label(form.workingHours, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                    {{ form_widget(form.workingHours) }}
+                    {{ form_errors(form.workingHours) }}
+                </div>
             </div>
-            <div style="margin-top:20px; text-align:right;">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-check"></i> Submit Attendance
+
+            <div style="margin-top:24px; text-align:right;">
+                <button type="submit" class="btn btn-primary" style="padding:12px 28px; font-weight:700; border-radius:8px;">
+                    <i class="fa-solid fa-check-circle"></i> Save Attendance Record
                 </button>
             </div>
         {{ form_end(form) }}

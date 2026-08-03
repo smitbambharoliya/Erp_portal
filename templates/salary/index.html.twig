@@ -1,65 +1,87 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Salary Slips — CoreUI ERP Portal{% endblock %}
-{% block page_heading %}Salary & Payroll{% endblock %}
+{% block title %}Salary Slips — HR Portal{% endblock %}
+{% block page_heading %}Salary & Payroll Slips{% endblock %}
 
 {% block body %}
-<div class="card">
-    <div class="card-header">
-        <h5><i class="fa-solid fa-wallet" style="margin-right:8px; color:var(--danger);"></i> Payroll Slips</h5>
+<div class="card" style="border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow:hidden;">
+    <div class="card-header" style="background:#ffffff; padding:18px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+        <h5 style="margin:0; font-weight:700; color:#1e293b;">
+            <i class="fa-solid fa-wallet" style="margin-right:8px; color:var(--success);"></i> Monthly Salary Slips
+        </h5>
         {% if is_granted('ROLE_HR') %}
-        <a href="{{ path('app_salary_new') }}" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add Salary Slip
+        <a href="{{ path('app_salary_new') }}" class="btn btn-primary" style="padding:8px 18px; font-weight:600; border-radius:8px;">
+            <i class="fa-solid fa-plus-circle"></i> Create Salary Slip
         </a>
         {% endif %}
     </div>
+
     <div class="card-body" style="padding:0;">
         <div class="table-responsive">
-            <table class="table">
+            <table class="table" style="margin-bottom:0; width:100%;">
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Employee</th>
-                        <th>Basic Salary</th>
-                        <th>Allowances</th>
-                        <th>Deductions</th>
-                        <th>Net Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                    <tr style="background:#f8fafc; text-transform:uppercase; font-size:0.75rem; letter-spacing:0.5px; color:#64748b;">
+                        <th style="padding:14px 20px;">ID</th>
+                        <th style="padding:14px 20px;">Employee</th>
+                        <th style="padding:14px 20px;">Period</th>
+                        <th style="padding:14px 20px;">Basic Salary</th>
+                        <th style="padding:14px 20px;">Bonus</th>
+                        <th style="padding:14px 20px;">Deductions</th>
+                        <th style="padding:14px 20px;">Net Salary</th>
+                        <th style="padding:14px 20px;">Status</th>
+                        <th style="padding:14px 20px; text-align:right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for salary in salaries %}
-                    <tr>
-                        <td><strong>#{{ salary.id }}</strong></td>
-                        <td>
-                            <strong>
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:14px 20px;"><strong>#{{ salary.id }}</strong></td>
+                        <td style="padding:14px 20px;">
+                            <strong style="color:#1e293b;">
                                 {% if salary.employee %}
-                                    {{ salary.employee.firstName }} {{ salary.employee.lastName }}
+                                    {{ salary.employee.name }}
                                 {% else %}
-                                    Unknown
+                                    <span style="color:#94a3b8;">N/A</span>
                                 {% endif %}
                             </strong>
                         </td>
-                        <td>₹{{ salary.basicSalary ?? 0 }}</td>
-                        <td>₹{{ salary.allowances ?? 0 }}</td>
-                        <td>₹{{ salary.deductions ?? 0 }}</td>
-                        <td><strong style="color:var(--success);">₹{{ salary.netSalary ?? 0 }}</strong></td>
-                        <td>
-                            <span class="badge {{ salary.status == 'Paid' ? 'badge-success' : 'badge-warning' }}">
-                                {{ salary.status ?? 'Pending' }}
+                        <td style="padding:14px 20px;">
+                            <span class="badge" style="background:#f1f5f9; color:#475569; font-size:0.8rem; font-weight:600;">
+                                {{ salary.month ?? 'N/A' }} {{ salary.year ?? '' }}
                             </span>
                         </td>
-                        <td>
-                            <a href="{{ path('app_salary_show', {'id': salary.id}) }}" class="btn btn-sm btn-secondary"><i class="fa-solid fa-eye"></i></a>
+                        <td style="padding:14px 20px;">₹{{ salary.basicSalary ?? '0' }}</td>
+                        <td style="padding:14px 20px; color:var(--success);">+₹{{ salary.bonus ?? '0' }}</td>
+                        <td style="padding:14px 20px; color:var(--danger);">-₹{{ salary.deduction ?? '0' }}</td>
+                        <td style="padding:14px 20px;">
+                            <strong style="color:var(--success); font-size:0.95rem;">₹{{ salary.netSalary ?? '0' }}</strong>
+                        </td>
+                        <td style="padding:14px 20px;">
+                            {% if salary.paymentStatus == 'Paid' %}
+                                <span class="badge" style="background:#dcfce7; color:#15803d; font-weight:700; padding:6px 12px; border-radius:20px;">
+                                    <i class="fa-solid fa-circle-check"></i> Paid
+                                </span>
+                            {% else %}
+                                <span class="badge" style="background:#fef3c7; color:#b45309; font-weight:700; padding:6px 12px; border-radius:20px;">
+                                    <i class="fa-solid fa-clock"></i> {{ salary.paymentStatus ?? 'Pending' }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td style="padding:14px 20px; text-align:right;">
+                            <a href="{{ path('app_salary_show', {'id': salary.id}) }}" class="btn btn-sm btn-secondary" title="View Payslip" style="padding:6px 12px; border-radius:6px;">
+                                <i class="fa-solid fa-file-invoice-dollar"></i> View Slip
+                            </a>
                             {% if is_granted('ROLE_HR') %}
-                            <a href="{{ path('app_salary_edit', {'id': salary.id}) }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{{ path('app_salary_edit', {'id': salary.id}) }}" class="btn btn-sm btn-info" title="Edit Slip" style="padding:6px 12px; border-radius:6px; color:#ffffff; margin-left:4px;">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
                             {% endif %}
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="8" style="text-align:center; padding:40px; color:var(--text-mute);">
+                        <td colspan="9" style="text-align:center; padding:40px; color:#94a3b8;">
+                            <i class="fa-solid fa-wallet" style="font-size:2rem; margin-bottom:10px; display:block; opacity:0.4;"></i>
                             No salary records found.
                         </td>
                     </tr>

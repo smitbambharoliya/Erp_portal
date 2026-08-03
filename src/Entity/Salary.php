@@ -66,7 +66,7 @@ class Salary
         return $this->month;
     }
 
-    public function setMonth(string $month): static
+    public function setMonth(?string $month): static
     {
         $this->month = $month;
 
@@ -78,7 +78,7 @@ class Salary
         return $this->year;
     }
 
-    public function setYear(string $year): static
+    public function setYear(?string $year): static
     {
         $this->year = $year;
 
@@ -90,7 +90,7 @@ class Salary
         return $this->basicSalary;
     }
 
-    public function setBasicSalary(string $basicSalary): static
+    public function setBasicSalary(?string $basicSalary): static
     {
         $this->basicSalary = $basicSalary;
 
@@ -102,7 +102,7 @@ class Salary
         return $this->bonus;
     }
 
-    public function setBonus(string $bonus): static
+    public function setBonus(?string $bonus): static
     {
         $this->bonus = $bonus;
 
@@ -114,7 +114,7 @@ class Salary
         return $this->deduction;
     }
 
-    public function setDeduction(string $deduction): static
+    public function setDeduction(?string $deduction): static
     {
         $this->deduction = $deduction;
 
@@ -126,7 +126,7 @@ class Salary
         return $this->netSalary;
     }
 
-    public function setNetSalary(string $netSalary): static
+    public function setNetSalary(?string $netSalary): static
     {
         $this->netSalary = $netSalary;
 
@@ -138,7 +138,7 @@ class Salary
         return $this->paymentStatus;
     }
 
-    public function setPaymentStatus(string $paymentStatus): static
+    public function setPaymentStatus(?string $paymentStatus): static
     {
         $this->paymentStatus = $paymentStatus;
 

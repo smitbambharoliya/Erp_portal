@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Salary;
+use App\Entity\User;
 use App\Form\SalaryType;
 use App\Repository\SalaryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,17 +14,27 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/salary')]
-#[IsGranted('ROLE_HR')]
 final class SalaryController extends AbstractController
 {
     #[Route(name: 'app_salary_index', methods: ['GET'])]
     public function index(SalaryRepository $salaryRepository): Response
     {
+        /** @var User|null $user */
+        $user = $this->getUser();
+
+        if ($this->isGranted('ROLE_HR') || $this->isGranted('ROLE_ADMIN')) {
+            $salaries = $salaryRepository->findAll();
+        } else {
+            $employee = $user?->getEmployee();
+            $salaries = $salaryRepository->findBy(['employee' => $employee]);
+        }
+
         return $this->render('salary/index.html.twig', [
-            'salaries' => $salaryRepository->findAll(),
+            'salaries' => $salaries,
         ]);
     }
 
+    #[IsGranted('ROLE_HR')]
     #[Route('/new', name: 'app_salary_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -49,15 +60,25 @@ final class SalaryController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_salary_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_salary_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(Salary $salary): Response
     {
+        /** @var User|null $user */
+        $user = $this->getUser();
+
+        // HR & Admin can view any salary slip. Regular employees can only view their own salary slip.
+        if (!$this->isGranted('ROLE_HR') && $salary->getEmployee() !== $user?->getEmployee()) {
+            $this->addFlash('danger', 'You can only view your own salary slips.');
+            return $this->redirectToRoute('app_employee_deshboard');
+        }
+
         return $this->render('salary/show.html.twig', [
             'salary' => $salary,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_salary_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_HR')]
+    #[Route('/{id}/edit', name: 'app_salary_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(Request $request, Salary $salary, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(SalaryType::class, $salary);
@@ -80,7 +101,8 @@ final class SalaryController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_salary_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_HR')]
+    #[Route('/{id}', name: 'app_salary_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(Request $request, Salary $salary, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $salary->getId(), $request->getPayload()->getString('_token'))) {

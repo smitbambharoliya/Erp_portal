@@ -7,11 +7,6 @@
 <div class="card">
     <div class="card-header">
         <h5><i class="fa-solid fa-users-gear" style="margin-right:8px; color:var(--primary);"></i> Registered Users</h5>
-        {% if is_granted('ROLE_HR') %}
-        <a href="{{ path('app_user_new') }}" class="btn btn-primary">
-            <i class="fa-solid fa-user-plus"></i> Create User Account
-        </a>
-        {% endif %}
     </div>
     <div class="card-body" style="padding:0;">
         <div class="table-responsive">

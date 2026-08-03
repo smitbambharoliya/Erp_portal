@@ -1,65 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Salary Record — CoreUI ERP Portal{% endblock %}
+{% block title %}Edit Salary Record — HR Portal{% endblock %}
 {% block page_heading %}Edit Salary Record{% endblock %}
 
 {% block body %}
-<div class="card" style="max-width:650px; margin:0 auto;">
-    <div class="card-header">
-        <h5><i class="fa-solid fa-pen-to-square" style="margin-right:8px; color:var(--danger);"></i> Salary Slip #{{ salary.id }}</h5>
-        <a href="{{ path('app_salary_index') }}" class="btn btn-secondary btn-sm">
+<div class="card" style="max-width:750px; margin:0 auto; border-radius:12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div class="card-header" style="background:#ffffff; padding:18px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+        <h5 style="margin:0; font-weight:700; color:#1e293b;"><i class="fa-solid fa-pen-to-square" style="margin-right:8px; color:var(--primary);"></i> Edit Salary Slip #{{ salary.id }}</h5>
+        <a href="{{ path('app_salary_index') }}" class="btn btn-secondary btn-sm" style="padding:6px 14px; border-radius:6px;">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    <div class="card-body">
+    <div class="card-body" style="padding:24px;">
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-            <div class="form-grid">
-                <div class="form-group">
-                    {{ form_label(form.employee) }}
+            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;">
+                <div style="grid-column: span 2;">
+                    {{ form_label(form.employee, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.employee) }}
                     {{ form_errors(form.employee) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.basicSalary) }}
+                <div>
+                    {{ form_label(form.month, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                    {{ form_widget(form.month) }}
+                    {{ form_errors(form.month) }}
+                </div>
+                <div>
+                    {{ form_label(form.year, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                    {{ form_widget(form.year) }}
+                    {{ form_errors(form.year) }}
+                </div>
+                <div>
+                    {{ form_label(form.basicSalary, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.basicSalary) }}
                     {{ form_errors(form.basicSalary) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.allowances) }}
-                    {{ form_widget(form.allowances) }}
-                    {{ form_errors(form.allowances) }}
+                <div>
+                    {{ form_label(form.bonus, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                    {{ form_widget(form.bonus) }}
+                    {{ form_errors(form.bonus) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.deductions) }}
-                    {{ form_widget(form.deductions) }}
-                    {{ form_errors(form.deductions) }}
+                <div>
+                    {{ form_label(form.deduction, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                    {{ form_widget(form.deduction) }}
+                    {{ form_errors(form.deduction) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.netSalary) }}
+                <div>
+                    {{ form_label(form.netSalary, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
                     {{ form_widget(form.netSalary) }}
                     {{ form_errors(form.netSalary) }}
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.paymentDate) }}
-                    {{ form_widget(form.paymentDate) }}
-                    {{ form_errors(form.paymentDate) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.status) }}
-                    {{ form_widget(form.status) }}
-                    {{ form_errors(form.status) }}
+                <div style="grid-column: span 2;">
+                    {{ form_label(form.paymentStatus, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                    {{ form_widget(form.paymentStatus) }}
+                    {{ form_errors(form.paymentStatus) }}
                 </div>
             </div>
 
-            <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="margin-top:24px; display:flex; justify-content:space-between; align-items:center;">
                 {% if is_granted('ROLE_ADMIN') %}
                 {{ include('salary/_delete_form.html.twig') }}
                 {% else %}
                 <div></div>
                 {% endif %}
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-check"></i> Save Changes
+                <button type="submit" class="btn btn-primary" style="padding:10px 24px; font-weight:600; border-radius:8px;">
+                    <i class="fa-solid fa-check-circle"></i> Save Changes
                 </button>
             </div>
         {{ form_end(form) }}

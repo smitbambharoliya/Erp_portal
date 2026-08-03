@@ -1,49 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Attendance Log Details #{{ attendance.id }} — HR Portal{% endblock %}
-{% block page_heading %}Attendance Details & Employee History{% endblock %}
+{% block title %}Attendance History: {{ targetEmployee.name }} — HR Portal{% endblock %}
+{% block page_heading %}Employee Attendance History{% endblock %}
 
 {% block body %}
 {# Employee Summary Header #}
 <div class="card mb-4" style="border-radius:12px; border:none; box-shadow: 0 4px 15px rgba(0,0,0,0.06); background:#ffffff; padding:20px 24px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-        <div style="display:flex; align-items:center; gap:14px;">
-            {% if targetEmployee and targetEmployee.user and targetEmployee.user.profilePic %}
-                <img src="{{ asset('uploads/profile_pics/' ~ targetEmployee.user.profilePic) }}" alt="Avatar" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid var(--primary);">
-            {% else %}
-                <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #4f46e5); color:#ffffff; display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; flex-shrink:0;">
-                    {{ targetEmployee ? targetEmployee.firstName|first|upper : 'A' }}
-                </div>
-            {% endif %}
-            <div>
-                <h4 style="margin:0 0 4px 0; font-weight:800; color:#1e293b;">
-                    {% if targetEmployee %}
-                        {{ targetEmployee.name }}
-                    {% else %}
-                        Attendance Log #{{ attendance.id }}
-                    {% endif %}
-                </h4>
-                <span style="color:#64748b; font-size:0.9rem;">
-                    <i class="fa-solid fa-calendar" style="margin-right:4px;"></i> Date: <strong>{{ attendance.date }}</strong> |
-                    <i class="fa-solid fa-building" style="margin-left:6px; margin-right:4px;"></i> {{ targetEmployee and targetEmployee.department ? targetEmployee.department.name : 'General' }}
-                </span>
-            </div>
-        </div>
         <div>
-            <a href="{{ path('app_attendance_index') }}" class="btn btn-secondary btn-sm" style="padding:8px 16px; border-radius:6px;">
-                <i class="fa-solid fa-arrow-left"></i> Back to Logs
-            </a>
-            {% if is_granted('ROLE_HR') %}
-            <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn btn-primary btn-sm" style="padding:8px 16px; border-radius:6px; margin-left:6px;">
-                <i class="fa-solid fa-pen"></i> Edit Log
-            </a>
-            {% endif %}
+            <h4 style="margin:0 0 4px 0; font-weight:800; color:#1e293b; display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid fa-user-clock" style="color:var(--primary);"></i> {{ targetEmployee.name }}
+            </h4>
+            <span style="color:#64748b; font-size:0.9rem;">
+                <i class="fa-solid fa-building" style="margin-right:4px;"></i> {{ targetEmployee.department ? targetEmployee.department.name : 'General' }} |
+                <i class="fa-solid fa-briefcase" style="margin-left:6px; margin-right:4px;"></i> {{ targetEmployee.designation ?? 'Employee' }}
+            </span>
         </div>
+        <a href="{{ path('app_attendance_index') }}" class="btn btn-secondary btn-sm" style="padding:8px 16px; border-radius:6px;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Attendance Logs
+        </a>
     </div>
 </div>
 
-{# 4 Stat Summary Cards for Employee #}
-{% if targetEmployee %}
+{# 4 Stat Summary Cards #}
 <div class="row mb-4" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
     <div class="card" style="border-radius:12px; padding:18px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff;">
         <span style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">Days Present</span>
@@ -62,13 +41,12 @@
         <h2 style="margin:8px 0 0 0; font-weight:800; font-size:2rem;">{{ totalCount }} <span style="font-size:1rem; opacity:0.85;">records</span></h2>
     </div>
 </div>
-{% endif %}
 
-{# Full Attendance History Table #}
+{# Attendance History Table #}
 <div class="card" style="border-radius:12px; border:1px solid #e2e8f0; overflow:hidden;">
     <div class="card-header" style="background:#ffffff; padding:16px 20px; border-bottom:1px solid #e2e8f0;">
         <h5 style="margin:0; font-weight:700; color:#1e293b;">
-            <i class="fa-solid fa-history" style="color:var(--primary); margin-right:8px;"></i> Complete Attendance History
+            <i class="fa-solid fa-history" style="color:var(--primary); margin-right:8px;"></i> Attendance History Log
         </h5>
     </div>
 
@@ -88,27 +66,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for att in attendances %}
-                    <tr style="border-bottom:1px solid #f1f5f9; {% if att.id == attendance.id %}background:#f0f9ff;{% endif %}">
+                {% for attendance in attendances %}
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:14px 20px;"><strong>{{ attendance.date ?? '-' }}</strong></td>
                         <td style="padding:14px 20px;">
-                            <strong>{{ att.date ?? '-' }}</strong>
-                            {% if att.id == attendance.id %}
-                                <span class="badge badge-info" style="margin-left:4px; font-size:0.75rem;">Selected</span>
-                            {% endif %}
-                        </td>
-                        <td style="padding:14px 20px;">
-                            {% if att.checkIn %}
+                            {% if attendance.checkIn %}
                                 <span class="badge" style="background:rgba(16,185,129,0.15); color:#10b981; font-size:0.88rem; padding:6px 12px; border-radius:6px; font-weight:600;">
-                                    <i class="fa-solid fa-arrow-down-left" style="margin-right:4px;"></i> {{ att.checkIn }}
+                                    <i class="fa-solid fa-arrow-down-left" style="margin-right:4px;"></i> {{ attendance.checkIn }}
                                 </span>
                             {% else %}
                                 <span class="text-muted">-</span>
                             {% endif %}
                         </td>
                         <td style="padding:14px 20px;">
-                            {% if att.checkOut %}
+                            {% if attendance.checkOut %}
                                 <span class="badge" style="background:rgba(239,68,68,0.15); color:#ef4444; font-size:0.88rem; padding:6px 12px; border-radius:6px; font-weight:600;">
-                                    <i class="fa-solid fa-arrow-up-right" style="margin-right:4px;"></i> {{ att.checkOut }}
+                                    <i class="fa-solid fa-arrow-up-right" style="margin-right:4px;"></i> {{ attendance.checkOut }}
                                 </span>
                             {% else %}
                                 <span class="badge" style="background:rgba(245,158,11,0.15); color:#d97706; font-size:0.82rem; padding:5px 10px; border-radius:6px;">
@@ -117,26 +90,26 @@
                             {% endif %}
                         </td>
                         <td style="padding:14px 20px;">
-                            {% if att.workingHours %}
+                            {% if attendance.workingHours %}
                                 <span class="badge" style="background:rgba(99,102,241,0.15); color:#6366f1; font-size:0.85rem; padding:6px 12px; border-radius:6px; font-weight:600;">
-                                    <i class="fa-solid fa-stopwatch" style="margin-right:4px;"></i> {{ att.workingHours }}
+                                    <i class="fa-solid fa-stopwatch" style="margin-right:4px;"></i> {{ attendance.workingHours }}
                                 </span>
                             {% else %}
                                 <span class="text-muted" style="font-size:0.85rem;">-</span>
                             {% endif %}
                         </td>
                         <td style="padding:14px 20px;">
-                            {% if att.status == 'Present' or att.status == 'present' %}
+                            {% if attendance.status == 'Present' or attendance.status == 'present' %}
                                 <span class="badge badge-success" style="font-size:0.82rem; padding:5px 10px;">Present</span>
-                            {% elseif att.status == 'Absent' %}
+                            {% elseif attendance.status == 'Absent' %}
                                 <span class="badge badge-danger" style="font-size:0.82rem; padding:5px 10px;">Absent</span>
                             {% else %}
-                                <span class="badge badge-warning" style="font-size:0.82rem; padding:5px 10px;">{{ att.status ?? 'Present' }}</span>
+                                <span class="badge badge-warning" style="font-size:0.82rem; padding:5px 10px;">{{ attendance.status ?? 'Present' }}</span>
                             {% endif %}
                         </td>
                         {% if is_granted('ROLE_HR') %}
                         <td style="padding:14px 20px; text-align:center;">
-                            <a href="{{ path('app_attendance_edit', {'id': att.id}) }}" class="btn btn-sm btn-info" title="Edit Log" style="border-radius:6px; padding:5px 10px; color:#ffffff;">
+                            <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn btn-sm btn-info" title="Edit Log" style="border-radius:6px; padding:5px 10px; color:#ffffff;">
                                 <i class="fa-solid fa-pen"></i> Edit Log
                             </a>
                         </td>
@@ -145,7 +118,7 @@
                 {% else %}
                     <tr>
                         <td colspan="6" style="text-align:center; padding:40px; color:#94a3b8;">
-                            No attendance history found.
+                            No attendance history found for this employee.
                         </td>
                     </tr>
                 {% endfor %}

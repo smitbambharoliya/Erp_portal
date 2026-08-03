@@ -1,81 +1,117 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add Employee — CoreUI ERP Portal{% endblock %}
-{% block page_heading %}Add Employee{% endblock %}
+{% block title %}Complete Employee Onboarding — HR Portal{% endblock %}
+{% block page_heading %}Employee Onboarding & Registration{% endblock %}
 
 {% block body %}
-<div class="card" style="max-width:800px; margin:0 auto;">
-    <div class="card-header">
-        <h5><i class="fa-solid fa-user-plus" style="margin-right:8px; color:var(--primary);"></i> Employee Information</h5>
-        <a href="{{ path('app_employee_index') }}" class="btn btn-secondary btn-sm">
+<div class="card" style="max-width:850px; margin:0 auto; border-radius:12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow:hidden;">
+    <div class="card-header" style="background:#ffffff; padding:20px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h4 style="margin:0; font-weight:800; color:#1e293b;"><i class="fa-solid fa-user-plus" style="margin-right:10px; color:var(--primary);"></i> Complete Employee Onboarding</h4>
+            <span style="font-size:0.85rem; color:#64748b;">Create User Account, Personal Details & Initial Salary in one step.</span>
+        </div>
+        <a href="{{ path('app_employee_index') }}" class="btn btn-secondary btn-sm" style="padding:8px 16px; border-radius:6px;">
             <i class="fa-solid fa-arrow-left"></i> Back to List
         </a>
     </div>
 
-    <div class="card-body">
+    <div class="card-body" style="padding:28px;">
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-            <div class="form-grid">
-                <div class="form-group">
-                    {{ form_label(form.firstName) }}
-                    {{ form_widget(form.firstName) }}
-                    {{ form_errors(form.firstName) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.lastName) }}
-                    {{ form_widget(form.lastName) }}
-                    {{ form_errors(form.lastName) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.phone) }}
-                    {{ form_widget(form.phone) }}
-                    {{ form_errors(form.phone) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.designation) }}
-                    {{ form_widget(form.designation) }}
-                    {{ form_errors(form.designation) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.department) }}
-                    {{ form_widget(form.department) }}
-                    {{ form_errors(form.department) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.status) }}
-                    {{ form_widget(form.status) }}
-                    {{ form_errors(form.status) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.user) }}
-                    {{ form_widget(form.user) }}
-                    {{ form_errors(form.user) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.gender) }}
-                    {{ form_widget(form.gender) }}
-                    {{ form_errors(form.gender) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.dateOfBirth) }}
-                    {{ form_widget(form.dateOfBirth) }}
-                    {{ form_errors(form.dateOfBirth) }}
-                </div>
-                <div class="form-group">
-                    {{ form_label(form.joiningDate) }}
-                    {{ form_widget(form.joiningDate) }}
-                    {{ form_errors(form.joiningDate) }}
+
+            {# --- SECTION 1: USER LOGIN ACCOUNT --- #}
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin-bottom:24px;">
+                <h5 style="font-weight:700; color:var(--primary); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-user-lock"></i> 1. User Login Account Setup
+                </h5>
+                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;">
+                    <div>
+                        {{ form_label(form.email, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.email) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.plainPassword, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.plainPassword) }}
+                    </div>
+                    <div style="grid-column: span 2;">
+                        {{ form_label(form.profilePic, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.profilePic) }}
+                        {{ form_errors(form.profilePic) }}
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                {{ form_label(form.address) }}
-                {{ form_widget(form.address) }}
-                {{ form_errors(form.address) }}
+            {# --- SECTION 2: PERSONAL & WORK DETAILS --- #}
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin-bottom:24px;">
+                <h5 style="font-weight:700; color:#0284c7; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-id-card"></i> 2. Employee Profile & Department Details
+                </h5>
+                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;">
+                    <div>
+                        {{ form_label(form.firstName, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.firstName) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.lastName, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.lastName) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.phone, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.phone) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.gender, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.gender) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.dateOfBirth, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.dateOfBirth) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.department, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.department) }}
+                        {{ form_errors(form.department) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.designation, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.designation) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.joiningDate, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.joiningDate) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.status, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.status) }}
+                    </div>
+                    <div>
+                        {{ form_label(form.address, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.address) }}
+                    </div>
+                </div>
             </div>
 
-            <div style="margin-top:20px; text-align:right;">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-check"></i> Save Employee
+            {# --- SECTION 3: INITIAL SALARY SETUP --- #}
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin-bottom:24px;">
+                <h5 style="font-weight:700; color:var(--success); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-wallet"></i> 3. Initial Salary Setup
+                </h5>
+                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px;">
+                    <div style="grid-column: span 2;">
+                        {{ form_label(form.setInitialSalary, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.setInitialSalary) }}
+                    </div>
+                    <div style="grid-column: span 2;">
+                        {{ form_label(form.basicSalary, null, {'label_attr': {'style': 'font-weight:600; margin-bottom:6px; display:block;'}}) }}
+                        {{ form_widget(form.basicSalary) }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:right;">
+                <button type="submit" class="btn btn-primary" style="padding:12px 32px; font-weight:700; font-size:1rem; border-radius:8px;">
+                    <i class="fa-solid fa-check-circle"></i> Save & Complete Onboarding
                 </button>
             </div>
         {{ form_end(form) }}
