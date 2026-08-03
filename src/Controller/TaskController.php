@@ -3,13 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Task;
+use App\Entity\User;
 use App\Form\TaskType;
+use App\Repository\EmployeeRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/task')]
 final class TaskController extends AbstractController
@@ -17,16 +20,37 @@ final class TaskController extends AbstractController
     #[Route(name: 'app_task_index', methods: ['GET'])]
     public function index(TaskRepository $taskRepository): Response
     {
+        /** @var User|null $user */
+        $user  = $this->getUser();
+        $employee = $user?->getEmployee();
+
+
+        if($this->isGranted('ROLE_HR') || $this->isGranted('ROLE_ADMIN')){
+        
+            $tasks = $taskRepository->findAll();
+
+        }else{
+            $tasks = $taskRepository->findBy(['employee' => $employee]);
+        }
         return $this->render('task/index.html.twig', [
-            'tasks' => $taskRepository->findAll(),
+            'tasks' => $tasks,
         ]);
     }
 
+    #[IsGranted('ROLE_EMPLOYEE')]
     #[Route('/new', name: 'app_task_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, 
+    EntityManagerInterface $entityManager,
+
+    ): Response
     {
         $task = new Task();
-        $form = $this->createForm(TaskType::class, $task);
+        /** @var User|null $user */
+        $user = $this->getUser();
+        $employee = $user?->getEmployee();
+        $form = $this->createForm(TaskType::class, $task, [
+            'departmentId' => $employee?->getDepartment(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

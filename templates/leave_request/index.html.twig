@@ -51,9 +51,13 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{{ path('app_leave_request_show', {'id': leave.id}) }}" class="btn btn-sm btn-secondary"><i class="fa-solid fa-eye"></i></a>
+                            <a href="{{ path('app_leave_request_show', {'id': leave.id}) }}" class="btn btn-sm btn-secondary" title="View"><i class="fa-solid fa-eye"></i></a>
                             {% if is_granted('ROLE_HR') %}
-                            <a href="{{ path('app_leave_request_edit', {'id': leave.id}) }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
+                                {% if leave.status == 'Pending' %}
+                                    <a href="{{ path('app_leave_request_approve', {'id': leave.id}) }}" class="btn btn-sm btn-success" title="Approve"><i class="fa-solid fa-check"></i> Approve</a>
+                                    <a href="{{ path('app_leave_request_reject', {'id': leave.id}) }}" class="btn btn-sm btn-danger" title="Reject"><i class="fa-solid fa-xmark"></i> Reject</a>
+                                {% endif %}
+                                <a href="{{ path('app_leave_request_edit', {'id': leave.id}) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
                             {% endif %}
                         </td>
                     </tr>

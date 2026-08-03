@@ -8,6 +8,7 @@ use App\Entity\LeaveRequest;
 use App\Entity\User;
 use App\Form\LeaveRequestType;
 use App\Repository\LeaveRequestRepository;
+use App\Service\LeaveRequestService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,7 +55,7 @@ final class LeaveRequestController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Leave request created successfully!');
 
-            return $this->redirectToRoute('app_leave_request_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_employee_deshboard', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('leave_request/new.html.twig', [
@@ -98,5 +99,31 @@ final class LeaveRequestController extends AbstractController
         }
 
         return $this->redirectToRoute('app_leave_request_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/approve',name:'app_leave_request_approve')]
+    public function approve(
+        LeaveRequestService $leaveRequestService,
+        LeaveRequest $leaveRequest
+    ): Response
+    {
+        $leaveRequestService->approve($leaveRequest);
+
+        $this->addFlash('success', 'Leave request approved successfully!');
+        
+        return $this->redirectToRoute('app_hr_dashboard');
+    }
+
+    #[Route('/{id}/reject',name:'app_leave_request_reject')]
+    public function reject(
+        LeaveRequestService $leaveRequestService,
+        LeaveRequest $leaveRequest
+    ): Response
+    {
+        $leaveRequestService->reject($leaveRequest);
+
+        $this->addFlash('success', 'Leave request rejected successfully!');
+        
+        return $this->redirectToRoute('app_hr_dashboard');
     }
 }

@@ -53,8 +53,10 @@ final class EmployeeController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_employee_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Employee $employee, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Employee $employee, EntityManagerInterface $entityManager,EmployeeRepository $employeeRepository): Response
     {
+    
+
         $form = $this->createForm(EmployeeType::class, $employee);
         $form->handleRequest($request);
 

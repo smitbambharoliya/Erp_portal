@@ -2,6 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\AttendanceController;
+use App\Controller\DepartmentController;
+use App\Controller\LeaveRequestController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -40,6 +43,18 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkTo(SomeCrudController::class, 'The Label', 'fas fa-list');
+        yield MenuItem::linkTo(UserCrudController::class, 'Users', 'fas fa-list');
+        yield MenuItem::linkTo(DepartmentCrudController::class, 'Departments', 'fas fa-list');
+        yield MenuItem::linkTo(LeaveRequestCrudController::class, 'Leaves', 'fas fa-list');
+        yield MenuItem::linkTo(HolidayCrudController::class, 'Holiday', 'fas fa-list');
+        yield MenuItem::linkTo(EmployeeCrudController::class, 'Employees', 'fas fa-list');
+        yield MenuItem::linkTo(HolidayCrudController::class, 'Holiday', 'fas fa-list');
+        yield MenuItem::linkTo(DocumentCrudController::class, 'Documents', 'fas fa-list');
+        yield MenuItem::linkTo(NotificationCrudController::class, 'Notifications', 'fas fa-list');
+        yield MenuItem::linkTo(ProjectCrudController::class, 'Projects', 'fas fa-list');
+        yield MenuItem::linkTo(TaskCrudController::class, 'Tasks', 'fas fa-list');
+        yield MenuItem::linkTo(SalaryCrudController::class,'Salary','fas fa-list');
+        yield MenuItem::linkTo(UserCrudController::class,'Users','fas fa-list');
+        
     }
 }

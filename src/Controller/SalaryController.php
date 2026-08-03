@@ -73,7 +73,7 @@ final class SalaryController extends AbstractController
     #[Route('/{id}', name: 'app_salary_delete', methods: ['POST'])]
     public function delete(Request $request, Salary $salary, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$salary->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $salary->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($salary);
             $entityManager->flush();
         }

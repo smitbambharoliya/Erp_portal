@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HR Dashboard — CoreUI ERP Portal{% endblock %}
+{% block page_heading %}HR Dashboard{% endblock %}
+
+{% block body %}
+{# Stat Cards Grid #}
+<div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <div class="card" style="border-left: 4px solid var(--primary);">
+        <div class="card-body" style="padding: 20px;">
+            <div style="font-size: 0.85rem; color: var(--text-mute); font-weight: 600; text-transform: uppercase;">Total Employees</div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-top: 5px;">{{ total_employees }}</div>
+        </div>
+    </div>
+    
+    <div class="card" style="border-left: 4px solid var(--success);">
+        <div class="card-body" style="padding: 20px;">
+            <div style="font-size: 0.85rem; color: var(--text-mute); font-weight: 600; text-transform: uppercase;">Active Employees</div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--success); margin-top: 5px;">{{ active_employees }}</div>
+        </div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--warning);">
+        <div class="card-body" style="padding: 20px;">
+            <div style="font-size: 0.85rem; color: var(--text-mute); font-weight: 600; text-transform: uppercase;">Pending Leaves</div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--warning); margin-top: 5px;">{{ pending_leaves }}</div>
+        </div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--info);">
+        <div class="card-body" style="padding: 20px;">
+            <div style="font-size: 0.85rem; color: var(--text-mute); font-weight: 600; text-transform: uppercase;">Departments</div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--info); margin-top: 5px;">{{ departments|length }}</div>
+        </div>
+    </div>
+</div>
+
+{# Pending Leave Requests Section #}
+<div class="card mb-4">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h5><i class="fa-solid fa-clock-rotate-left" style="color: var(--warning); margin-right: 8px;"></i> Pending Leave Applications</h5>
+        <a href="{{ path('app_leave_request_index') }}" class="btn btn-sm btn-outline-primary">View All Applications</a>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <div class="table-responsive">
+            <table class="table" style="margin: 0;">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Leave Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for leave in pending_leaves_list %}
+                    <tr>
+                        <td>
+                            <strong>
+                                {% if leave.employee %}
+                                    {{ leave.employee.firstName }} {{ leave.employee.lastName }}
+                                {% else %}
+                                    Unknown Employee
+                                {% endif %}
+                            </strong>
+                        </td>
+                        <td><span class="badge badge-info">{{ leave.leaveType ?? 'Casual Leave' }}</span></td>
+                        <td>{{ leave.startDate ?? '-' }}</td>
+                        <td>{{ leave.endDate ?? '-' }}</td>
+                        <td><span class="badge badge-warning">Pending</span></td>
+                        <td style="text-align: center;">
+                            <a href="{{ path('app_leave_request_approve', {'id': leave.id}) }}" class="btn btn-sm btn-success" style="margin-right: 5px;">
+                                <i class="fa-solid fa-check"></i> Approve
+                            </a>
+                            <a href="{{ path('app_leave_request_reject', {'id': leave.id}) }}" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-xmark"></i> Reject
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-mute);">
+                            No pending leave requests at this moment.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

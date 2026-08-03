@@ -24,23 +24,23 @@ final class HrDashboardController extends AbstractController
         LeaveRequestRepository $leaveRequestRepository,
         AttendanceRepository $attendanceRepository,
     ): Response {
-        // Department-wise employees count
+
         $departments = $departmentRepository->findAll();
 
-        // Badha employees
+  
         $totalEmployees = count($employeeRepository->findAll());
 
-        // Pending leave requests
         $pendingLeaves = $leaveRequestRepository->findBy(['status' => 'Pending']);
 
-        // Active employees
+     
         $activeEmployees = $employeeRepository->findBy(['status' => 'Active']);
 
         return $this->render('hr/dashboard.html.twig', [
-            'total_employees'  => $totalEmployees,
-            'active_employees' => count($activeEmployees),
-            'departments'      => $departments,
-            'pending_leaves'   => count($pendingLeaves),
+            'total_employees'     => $totalEmployees,
+            'active_employees'    => count($activeEmployees),
+            'departments'         => $departments,
+            'pending_leaves'      => count($pendingLeaves),
+            'pending_leaves_list' => $pendingLeaves,
         ]);
     }
 }

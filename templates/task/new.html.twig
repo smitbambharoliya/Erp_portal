@@ -24,6 +24,13 @@
                 {{ form_widget(form.description) }}
                 {{ form_errors(form.description) }}
             </div>
+            {% if form.employee is defined %}
+            <div class="form-group mb-3">
+                {{ form_label(form.employee) }}
+                {{ form_widget(form.employee) }}
+                {{ form_errors(form.employee) }}
+            </div>
+            {% endif %}
             <div class="form-grid">
                 <div class="form-group">
                     {{ form_label(form.priority) }}

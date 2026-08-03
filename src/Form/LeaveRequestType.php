@@ -16,13 +16,6 @@ class LeaveRequestType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('employee', EntityType::class, [
-                'class' => Employee::class,
-                'choice_label' => 'name',
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
             ->add('leaveType', TextType::class, [
                 'attr' => [
                     'class' => 'form-control',
@@ -40,17 +33,6 @@ class LeaveRequestType extends AbstractType
                     'class' => 'form-control',
                 ],
             ])
-            ->add('status', TextType::class, [
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
-            ->add('approvedBy', TextType::class, [
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
-            
         ;
     }
 

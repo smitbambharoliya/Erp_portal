@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Entity\Employee;
 use App\Entity\Task;
+use App\Repository\EmployeeRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -19,6 +22,19 @@ class TaskType extends AbstractType
         $builder
             ->add('title',TextType::class,[
                 'label'=>'Task Title',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('employee', EntityType::class, [
+                'class' => Employee::class,
+                'choice_label' => 'name',
+                'query_builder' => function (EmployeeRepository $er) use ($options) {
+                    return $er->serchTeamMember($options['departmentId']);
+                },
+                'label' => 'Assign To Team Member',
+                'multiple' => true,
+                'expanded' => false,
                 'attr' => [
                     'class' => 'form-control',
                 ],
@@ -66,6 +82,7 @@ class TaskType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Task::class,
+            'departmentId' => null,
         ]);
     }
 }
