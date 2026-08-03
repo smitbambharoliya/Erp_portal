@@ -26,13 +26,13 @@ class Attendance
     #[ORM\Column(length: 255)]
     private ?string $checkIn = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $checkOut = null;
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $workingHours = null;
 
     #[ORM\Column]
@@ -84,7 +84,7 @@ class Attendance
         return $this->checkOut;
     }
 
-    public function setCheckOut(string $checkOut): static
+    public function setCheckOut(?string $checkOut): static
     {
         $this->checkOut = $checkOut;
 
@@ -108,7 +108,7 @@ class Attendance
         return $this->workingHours;
     }
 
-    public function setWorkingHours(string $workingHours): static
+    public function setWorkingHours(?string $workingHours): static
     {
         $this->workingHours = $workingHours;
 
@@ -119,11 +119,18 @@ class Attendance
     {
         return $this->createdAt;
     }
-    #[ORM\PrePersist]
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
     }
 }

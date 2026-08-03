@@ -25,12 +25,10 @@ final class TaskController extends AbstractController
         $employee = $user?->getEmployee();
 
 
-        if($this->isGranted('ROLE_HR') || $this->isGranted('ROLE_ADMIN')){
-        
+        if ($this->isGranted('ROLE_HR') || $this->isGranted('ROLE_ADMIN')) {
             $tasks = $taskRepository->findAll();
-
-        }else{
-            $tasks = $taskRepository->findBy(['employee' => $employee]);
+        } else {
+            $tasks = $taskRepository->findByEmployee($employee);
         }
         return $this->render('task/index.html.twig', [
             'tasks' => $tasks,
@@ -56,8 +54,13 @@ final class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($task);
             $entityManager->flush();
+            $this->addFlash('success', 'Task created successfully!');
 
             return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Please fill in all required task details correctly.');
         }
 
         return $this->render('task/new.html.twig', [
@@ -82,8 +85,13 @@ final class TaskController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+            $this->addFlash('success', 'Task updated successfully!');
 
             return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Please fix the errors in the task form.');
         }
 
         return $this->render('task/edit.html.twig', [
@@ -98,6 +106,7 @@ final class TaskController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$task->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($task);
             $entityManager->flush();
+            $this->addFlash('warning', 'Task deleted successfully.');
         }
 
         return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);

@@ -1,65 +1,143 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Attendance — CoreUI ERP Portal{% endblock %}
-{% block page_heading %}Attendance Logs{% endblock %}
+{% block page_heading %}Attendance Records{% endblock %}
 
 {% block body %}
-<div class="card">
-    <div class="card-header">
-        <h5><i class="fa-solid fa-calendar-check" style="margin-right:8px; color:var(--success);"></i> Attendance Records</h5>
-        <a href="{{ path('app_attendance_new') }}" class="btn btn-primary">
-            <i class="fa-solid fa-clock"></i> Mark Attendance
-        </a>
+{# Header Banner #}
+<div class="card mb-4" style="background: linear-gradient(135deg, #2eb85c 0%, #39f 100%); color: #ffffff; border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(46,184,92,0.25);">
+    <div class="card-body" style="padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h3 style="font-weight: 700; font-size: 1.4rem; margin-bottom: 4px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    {% if is_granted('ROLE_HR') %}
+                        Company Attendance Logs
+                    {% else %}
+                        My Attendance History
+                    {% endif %}
+                </h3>
+                <p style="opacity: 0.9; margin: 0; font-size: 0.92rem;">
+                    {% if is_granted('ROLE_HR') %}
+                        Viewing attendance records for all company employees.
+                    {% else %}
+                        Viewing your daily punch-in and punch-out history.
+                    {% endif %}
+                </p>
+            </div>
+            
+            {% if is_granted('ROLE_HR') %}
+                <div>
+                    <a href="{{ path('app_attendance_new') }}" class="btn" style="background: #ffffff; color: var(--success); font-weight: 600; padding: 10px 18px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                        <i class="fa-solid fa-plus-circle"></i> Manual Attendance Entry
+                    </a>
+                </div>
+            {% else %}
+                <div>
+                    <form action="{{ path('app_attendance') }}" method="POST" style="display: inline-block; margin: 0;">
+                        <button type="submit" class="btn" style="background: #ffffff; color: var(--success); font-weight: 700; padding: 10px 18px; border-radius: 8px; border: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                            <i class="fa-solid fa-right-to-bracket"></i> Quick Check In
+                        </button>
+                    </form>
+                    <form action="{{ path('app_attendance_checkout') }}" method="POST" style="display: inline-block; margin-left: 8px;">
+                        <button type="submit" class="btn" style="background: rgba(229,83,83,0.9); color: #ffffff; font-weight: 700; padding: 10px 18px; border-radius: 8px; border: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                            <i class="fa-solid fa-right-from-bracket"></i> Quick Check Out
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
     </div>
-    <div class="card-body" style="padding:0;">
+</div>
+
+{# Attendance List Card #}
+<div class="card" style="border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+    <div class="card-header" style="background: #ffffff; padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <h5 style="margin: 0; font-weight: 700; color: var(--text-main); font-size: 1.05rem;">
+            <i class="fa-solid fa-list" style="color: var(--success); margin-right: 8px;"></i>
+            Attendance Logs ({{ attendances|length }})
+        </h5>
+    </div>
+    
+    <div class="card-body" style="padding: 0;">
         <div class="table-responsive">
-            <table class="table">
-                <thead>
+            <table class="table" style="margin: 0; vertical-align: middle;">
+                <thead style="background: #f8f9fa;">
                     <tr>
-                        <th>ID</th>
-                        <th>Employee</th>
-                        <th>Date</th>
-                        <th>Check In</th>
-                        <th>Check Out</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th style="padding: 14px 20px; font-weight: 600; color: var(--text-mute); font-size: 0.85rem; text-transform: uppercase;">Date</th>
+                        {% if is_granted('ROLE_HR') %}
+                            <th style="padding: 14px 20px; font-weight: 600; color: var(--text-mute); font-size: 0.85rem; text-transform: uppercase;">Employee</th>
+                        {% endif %}
+                        <th style="padding: 14px 20px; font-weight: 600; color: var(--text-mute); font-size: 0.85rem; text-transform: uppercase;">Check In</th>
+                        <th style="padding: 14px 20px; font-weight: 600; color: var(--text-mute); font-size: 0.85rem; text-transform: uppercase;">Check Out</th>
+                        <th style="padding: 14px 20px; font-weight: 600; color: var(--text-mute); font-size: 0.85rem; text-transform: uppercase;">Status</th>
+                        <th style="padding: 14px 20px; font-weight: 600; color: var(--text-mute); font-size: 0.85rem; text-transform: uppercase; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for attendance in attendances %}
-                    <tr>
-                        <td><strong>#{{ attendance.id }}</strong></td>
-                        <td>
-                            <strong>
-                                {% if attendance.employee %}
-                                    {{ attendance.employee.firstName }} {{ attendance.employee.lastName }}
-                                {% else %}
-                                    Unknown Employee
-                                {% endif %}
-                            </strong>
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 14px 20px;">
+                            <strong style="color: var(--text-main);">{{ attendance.date ?? '-' }}</strong>
                         </td>
-                        <td>{{ attendance.date ?? '-' }}</td>
-                        <td><span style="color:var(--success); font-weight:600;">{{ attendance.checkIn ?? '-' }}</span></td>
-                        <td><span style="color:var(--danger); font-weight:600;">{{ attendance.checkOut ?? '-' }}</span></td>
-                        <td>
-                            {% if attendance.status == 'Present' %}
-                                <span class="badge badge-success">Present</span>
-                            {% elseif attendance.status == 'Absent' %}
-                                <span class="badge badge-danger">Absent</span>
+                        {% if is_granted('ROLE_HR') %}
+                            <td style="padding: 14px 20px;">
+                                <div style="font-weight: 600; color: var(--text-main);">
+                                    {% if attendance.employee %}
+                                        {{ attendance.employee.firstName }} {{ attendance.employee.lastName }}
+                                    {% else %}
+                                        <span class="text-muted">Unknown Employee</span>
+                                    {% endif %}
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-mute);">
+                                    {{ attendance.employee and attendance.employee.department ? attendance.employee.department.name : '' }}
+                                </div>
+                            </td>
+                        {% endif %}
+                        <td style="padding: 14px 20px;">
+                            {% if attendance.checkIn %}
+                                <span class="badge" style="background: rgba(46,184,92,0.15); color: #2eb85c; font-size: 0.88rem; padding: 6px 12px; border-radius: 6px; font-weight: 600;">
+                                    <i class="fa-solid fa-arrow-down-left" style="margin-right: 4px;"></i> {{ attendance.checkIn }}
+                                </span>
                             {% else %}
-                                <span class="badge badge-warning">{{ attendance.status ?? 'Pending' }}</span>
+                                <span class="text-muted">-</span>
                             {% endif %}
                         </td>
-                        <td>
-                            <a href="{{ path('app_attendance_show', {'id': attendance.id}) }}" class="btn btn-sm btn-secondary"><i class="fa-solid fa-eye"></i></a>
+                        <td style="padding: 14px 20px;">
+                            {% if attendance.checkOut %}
+                                <span class="badge" style="background: rgba(229,83,83,0.15); color: #e55353; font-size: 0.88rem; padding: 6px 12px; border-radius: 6px; font-weight: 600;">
+                                    <i class="fa-solid fa-arrow-up-right" style="margin-right: 4px;"></i> {{ attendance.checkOut }}
+                                </span>
+                            {% else %}
+                                <span class="badge" style="background: rgba(249,177,21,0.15); color: #b7791f; font-size: 0.82rem; padding: 5px 10px; border-radius: 6px;">
+                                    Working (In Progress)
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 14px 20px;">
+                            {% if attendance.status == 'Present' or attendance.status == 'present' %}
+                                <span class="badge badge-success" style="font-size: 0.82rem; padding: 5px 10px;">Present</span>
+                            {% elseif attendance.status == 'Absent' %}
+                                <span class="badge badge-danger" style="font-size: 0.82rem; padding: 5px 10px;">Absent</span>
+                            {% else %}
+                                <span class="badge badge-warning" style="font-size: 0.82rem; padding: 5px 10px;">{{ attendance.status ?? 'Present' }}</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 14px 20px; text-align: center;">
+                            <a href="{{ path('app_attendance_show', {'id': attendance.id}) }}" class="btn btn-sm btn-secondary" title="View Details" style="border-radius: 6px; padding: 5px 10px;">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
                             {% if is_granted('ROLE_HR') %}
-                            <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
+                                <a href="{{ path('app_attendance_edit', {'id': attendance.id}) }}" class="btn btn-sm btn-outline-primary" title="Edit Log" style="border-radius: 6px; padding: 5px 10px; margin-left: 4px;">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
                             {% endif %}
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="7" style="text-align:center; padding:40px; color:var(--text-mute);">
+                        <td colspan="{% if is_granted('ROLE_HR') %}6{% else %}5{% endif %}" style="text-align: center; padding: 40px; color: var(--text-mute);">
+                            <i class="fa-solid fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
                             No attendance records found.
                         </td>
                     </tr>

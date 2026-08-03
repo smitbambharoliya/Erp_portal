@@ -54,6 +54,10 @@ security:
         # Salary - sirf ROLE_HR ane upar
         - { path: ^/salary,   roles: ROLE_HR }
 
+        # Employee Dashboard & Profile view - ROLE_EMPLOYEE
+        - { path: ^/employee/deshboard, roles: ROLE_EMPLOYEE }
+        - { path: ^/employee/\d+, roles: ROLE_EMPLOYEE }
+
         # Employee management - sirf ROLE_HR ane upar
         - { path: ^/employee, roles: ROLE_HR }
 

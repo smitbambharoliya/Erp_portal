@@ -35,6 +35,45 @@
             </div>
         </div>
     </div>
+{# Attendance Punch Widget #}
+<div class="card mb-4" style="border: 1px solid var(--border-color); border-radius: 12px;">
+    <div class="card-body" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h5 style="font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-clock" style="color: var(--primary);"></i> Daily Attendance
+            </h5>
+            <p style="margin: 4px 0 0 0; font-size: 0.88rem; color: var(--text-mute);">
+                {% if todayAttendance is defined and todayAttendance %}
+                    Check In: <strong>{{ todayAttendance.checkIn }}</strong>
+                    {% if todayAttendance.checkOut %}
+                         | Check Out: <strong>{{ todayAttendance.checkOut }}</strong>
+                    {% endif %}
+                {% else %}
+                    You haven't checked in yet today.
+                {% endif %}
+            </p>
+        </div>
+
+        <div>
+            {% if todayAttendance is not defined or not todayAttendance %}
+                <form action="{{ path('app_attendance') }}" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn btn-success" style="font-weight: 600; padding: 10px 24px; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Check In Today
+                    </button>
+                </form>
+            {% elseif todayAttendance and not todayAttendance.checkOut %}
+                <form action="{{ path('app_attendance_checkout') }}" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn btn-danger" style="font-weight: 600; padding: 10px 24px; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Check Out Today
+                    </button>
+                </form>
+            {% else %}
+                <span class="badge badge-success" style="font-size: 1rem; padding: 10px 16px; border-radius: 8px;">
+                    <i class="fa-solid fa-circle-check"></i> Present Today (Checked Out)
+                </span>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 {# Stat Cards Grid #}

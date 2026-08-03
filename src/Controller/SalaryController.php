@@ -34,8 +34,13 @@ final class SalaryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($salary);
             $entityManager->flush();
+            $this->addFlash('success', 'Salary record created successfully!');
 
             return $this->redirectToRoute('app_salary_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Please fill in all required salary details correctly.');
         }
 
         return $this->render('salary/new.html.twig', [
@@ -60,8 +65,13 @@ final class SalaryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+            $this->addFlash('success', 'Salary record updated successfully!');
 
             return $this->redirectToRoute('app_salary_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Please fix errors in the salary form.');
         }
 
         return $this->render('salary/edit.html.twig', [
@@ -76,6 +86,7 @@ final class SalaryController extends AbstractController
         if ($this->isCsrfTokenValid('delete' . $salary->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($salary);
             $entityManager->flush();
+            $this->addFlash('warning', 'Salary record deleted.');
         }
 
         return $this->redirectToRoute('app_salary_index', [], Response::HTTP_SEE_OTHER);

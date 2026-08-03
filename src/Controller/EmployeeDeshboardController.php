@@ -30,15 +30,17 @@ class EmployeeDeshboardController extends AbstractController
         
 
         $employee = $employeeRepository->findOneBy(['user' => $user]);
+        $todayAttendance = $attendanceRepository->findattendance($employee);
         $leaveRequests = $leaveRequestRepository->findBy(['employee' => $employee]);
-        $attendances = $attendanceRepository->findBy(['employee' => $employee]);
-        $tasks = $taskRepository->findBy(['employee' => $employee]);
-        $projects = $projectRepository->findBy(['employee' => $employee]);
+        $attendances = $attendanceRepository->findBy(['employee' => $employee], ['id' => 'DESC']);
+        $tasks = $taskRepository->findByEmployee($employee);
+        $projects = $projectRepository->findAll();
         $salaries = $salaryRepository->findBy(['employee' => $employee]);
 
         return $this->render('employee_deshboard/index.html.twig', [
             'controller_name' => 'EmployeeDeshboardController',
             'employee' => $employee,
+            'todayAttendance' => $todayAttendance,
             'leaveRequests' => $leaveRequests,
             'attendances' => $attendances,
             'tasks' => $tasks,

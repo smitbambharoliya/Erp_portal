@@ -58,6 +58,10 @@ final class LeaveRequestController extends AbstractController
             return $this->redirectToRoute('app_employee_deshboard', [], Response::HTTP_SEE_OTHER);
         }
 
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('danger', 'Please fill in all required leave application details correctly.');
+        }
+
         return $this->render('leave_request/new.html.twig', [
             'leave_request' => $leaveRequest,
             'form' => $form,
