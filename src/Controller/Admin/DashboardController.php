@@ -11,6 +11,17 @@ use App\Repository\LeaveRequestRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
+use App\Controller\Admin\AnnouncementCrudController;
+use App\Controller\Admin\DepartmentCrudController;
+use App\Controller\Admin\DocumentCrudController;
+use App\Controller\Admin\EmployeeCrudController;
+use App\Controller\Admin\HolidayCrudController;
+use App\Controller\Admin\LeaveRequestCrudController;
+use App\Controller\Admin\NotificationCrudController;
+use App\Controller\Admin\ProjectCrudController;
+use App\Controller\Admin\SalaryCrudController;
+use App\Controller\Admin\TaskCrudController;
+use App\Controller\Admin\UserCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -74,21 +85,21 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-gauge-high');
 
         yield MenuItem::section('People');
-        yield MenuItem::linkToCrud('Employees', 'fas fa-users', \App\Entity\Employee::class);
-        yield MenuItem::linkToCrud('Users', 'fas fa-user-circle', \App\Entity\User::class);
-        yield MenuItem::linkToCrud('Departments', 'fas fa-building', \App\Entity\Department::class);
+        yield MenuItem::linkTo(EmployeeCrudController::class, 'Employees', 'fas fa-users');
+        yield MenuItem::linkTo(UserCrudController::class, 'Users', 'fas fa-user-circle');
+        yield MenuItem::linkTo(DepartmentCrudController::class, 'Departments', 'fas fa-building');
 
         yield MenuItem::section('Work');
-        yield MenuItem::linkToCrud('Projects', 'fas fa-diagram-project', \App\Entity\Project::class);
-        yield MenuItem::linkToCrud('Tasks', 'fas fa-list-check', \App\Entity\Task::class);
+        yield MenuItem::linkTo(ProjectCrudController::class, 'Projects', 'fas fa-diagram-project');
+        yield MenuItem::linkTo(TaskCrudController::class, 'Tasks', 'fas fa-list-check');
 
         yield MenuItem::section('HR');
-        yield MenuItem::linkToCrud('Leave Requests', 'fas fa-calendar-xmark', \App\Entity\LeaveRequest::class);
-        yield MenuItem::linkToCrud('Salary', 'fas fa-money-bill-wave', \App\Entity\Salary::class);
-        yield MenuItem::linkToCrud('Announcements', 'fas fa-bullhorn', \App\Entity\Announcement::class);
-        yield MenuItem::linkToCrud('Holidays', 'fas fa-umbrella-beach', \App\Entity\Holiday::class);
-        yield MenuItem::linkToCrud('Documents', 'fas fa-folder-open', \App\Entity\Document::class);
-        yield MenuItem::linkToCrud('Notifications', 'fas fa-bell', \App\Entity\Notification::class);
+        yield MenuItem::linkTo(LeaveRequestCrudController::class, 'Leave Requests', 'fas fa-calendar-xmark');
+        yield MenuItem::linkTo(SalaryCrudController::class, 'Salary', 'fas fa-money-bill-wave');
+        yield MenuItem::linkTo(AnnouncementCrudController::class, 'Announcements', 'fas fa-bullhorn');
+        yield MenuItem::linkTo(HolidayCrudController::class, 'Holidays', 'fas fa-umbrella-beach');
+        yield MenuItem::linkTo(DocumentCrudController::class, 'Documents', 'fas fa-folder-open');
+        yield MenuItem::linkTo(NotificationCrudController::class, 'Notifications', 'fas fa-bell');
 
         yield MenuItem::section('Site');
         yield MenuItem::linkToUrl('Back to Portal', 'fas fa-arrow-left', '/home');
