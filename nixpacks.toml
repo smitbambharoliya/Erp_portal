@@ -1,5 +1,5 @@
-[phases.setup]
-nixPkgs = ['php82', 'php82Extensions.pdo_mysql', 'php82Extensions.pdo', 'php82Extensions.intl', 'php82Extensions.ctype', 'php82Extensions.iconv', 'php82Packages.composer']
+[variables]
+NIXPACKS_PHP_EXTENSIONS = 'pdo,pdo_mysql,intl,ctype,iconv,mbstring,zip'
 
 [phases.install]
 cmds = ['composer install --no-dev --optimize-autoloader']
