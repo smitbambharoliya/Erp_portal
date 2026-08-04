@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Attendance;
-use App\Entity\Employee;
 use App\Entity\User;
 use App\Event\AttendanceCheckedOutEvent;
 use App\Form\AttendanceType;
