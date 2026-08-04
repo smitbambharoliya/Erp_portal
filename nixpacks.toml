@@ -1,12 +1,11 @@
 [variables]
-APP_RUNTIME_OPTIONS = 'disable_dotenv=1'
 NIXPACKS_PHP_EXTENSIONS = 'pdo,pdo_mysql,intl,ctype,iconv,mbstring,zip'
 
 [phases.install]
 cmds = ['composer install --no-dev --optimize-autoloader --no-scripts']
 
 [phases.build]
-cmds = ['php bin/console cache:clear']
+cmds = ['touch .env .env.local .env.dev .env.dev.local .env.prod .env.prod.local', 'php bin/console cache:clear']
 
 [start]
 cmd = 'php -S 0.0.0.0:$PORT -t public public/index.php'
