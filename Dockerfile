@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpng-dev \
     libjpeg-dev \
-    && docker-php-ext-install pdo pdo_mysql intl zip
+    && docker-php-ext-install pdo pdo_mysql intl zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy Composer from official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -19,8 +20,11 @@ WORKDIR /app
 COPY . .
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --no-dev --optimize-autoloader
+ENV APP_ENV=prod
+
+# Run composer install with --no-scripts to prevent build-time database connection attempts
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 EXPOSE 8080
 
-CMD php bin/console cache:clear && php -S 0.0.0.0:${PORT:-8080} -t public
+CMD php bin/console cache:clear --no-warmup && php bin/console assets:install public && php -S 0.0.0.0:${PORT:-8080} -t public
