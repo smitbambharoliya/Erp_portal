@@ -19,11 +19,12 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
-# Ensure .env file exists so Symfony runtime never throws PathException
+# Ensure .env file exists
 RUN touch .env
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV APP_ENV=prod
+ENV APP_RUNTIME_OPTIONS="disable_dotenv=1"
 
 # Run composer install with --no-scripts to prevent build-time database connection attempts
 RUN composer install --no-dev --optimize-autoloader --no-scripts
