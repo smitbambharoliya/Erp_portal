@@ -19,17 +19,15 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
-# Ensure all possible .env files exist and are readable by all users
-RUN touch .env .env.local .env.dev .env.dev.local .env.prod .env.prod.local \
-    && chmod 777 .env*
+# Ensure .env exists and is readable
+RUN [ -f .env ] || echo "# fallback" > .env && chmod 644 .env
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV APP_ENV=prod
-ENV APP_RUNTIME_OPTIONS="disable_dotenv=1"
 
-# Run composer install with --no-scripts to prevent build-time database connection attempts
+# Run composer install
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 EXPOSE 8080
 
-CMD php bin/console cache:clear && php -S 0.0.0.0:$PORT -t public public/index.php
+CMD php -S 0.0.0.0:$PORT -t public public/index.php
