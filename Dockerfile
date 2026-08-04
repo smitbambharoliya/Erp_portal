@@ -27,4 +27,4 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 EXPOSE 8080
 
-CMD php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && php bin/console cache:clear --no-warmup && php bin/console assets:install public && php -S 0.0.0.0:${PORT:-8080} -t public
+CMD (php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true) && php bin/console cache:clear --no-warmup && php bin/console assets:install public && php -S 0.0.0.0:${PORT:-8080} -t public
