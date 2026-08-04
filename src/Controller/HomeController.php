@@ -18,10 +18,16 @@ final class HomeController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // Redirect HR and Admin users to HR Dashboard
-        if ($this->isGranted('ROLE_HR') || $this->isGranted('ROLE_ADMIN')) {
+        // Redirect Admin users to EasyAdmin panel
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('admin');
+        }
+
+        // Redirect HR users to HR Dashboard
+        if ($this->isGranted('ROLE_HR')) {
             return $this->redirectToRoute('app_hr_dashboard');
         }
+
 
         // Redirect Regular Employees to Employee Workspace Dashboard
         return $this->redirectToRoute('app_employee_deshboard');

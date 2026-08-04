@@ -1,0 +1,194 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block main %}
+<style>
+    .adm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .adm-card {
+        border-radius: 12px; padding: 20px; color: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+        position: relative; overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none; display: block;
+    }
+    .adm-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.16); }
+    .adm-card .icon { font-size: 2.2rem; opacity: 0.22; position: absolute; right: 16px; top: 16px; }
+    .adm-card .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.88; margin-bottom: 6px; }
+    .adm-card .value { font-size: 2rem; font-weight: 800; line-height: 1.1; }
+    .adm-card .sub { font-size: 0.75rem; opacity: 0.8; margin-top: 6px; }
+    .c-purple { background: linear-gradient(135deg, #5856d6, #6366f1); }
+    .c-green  { background: linear-gradient(135deg, #10b981, #059669); }
+    .c-blue   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .c-amber  { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .c-red    { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .c-indigo { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .c-teal   { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .c-rose   { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+
+    .adm-section { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px; overflow: hidden; border: 1px solid #e5e7eb; }
+    .adm-section-header { padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: #f9fafb; }
+    .adm-section-header h2 { font-size: 0.95rem; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .adm-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .adm-table th { padding: 11px 16px; background: #f3f4f6; color: #6b7280; font-weight: 700; font-size: 0.73rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; }
+    .adm-table td { padding: 12px 16px; border-top: 1px solid #f3f4f6; color: #374151; }
+    .adm-table tr:hover td { background: #fafafa; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .badge-danger  { background: #fee2e2; color: #991b1b; }
+    .badge-info    { background: #dbeafe; color: #1e40af; }
+    .quick-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: opacity 0.15s; }
+    .quick-btn:hover { opacity: 0.85; }
+    .quick-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px; }
+</style>
+
+{# ─── Banner ─── #}
+<div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4c1d95 100%); border-radius: 14px; padding: 28px 32px; margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; box-shadow: 0 8px 24px rgba(88,86,214,0.3);">
+    <div>
+        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Super Admin Panel</div>
+        <h1 style="color:#fff; font-size:1.6rem; font-weight:800; margin:0 0 6px;">Welcome back, {{ app.user.email ?? 'Admin' }} 👋</h1>
+        <p style="color:rgba(255,255,255,0.65); margin:0; font-size:0.9rem;">Complete overview of your ERP system — {{ "now"|date("D, d M Y") }}</p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\EmployeeCrudController').setAction('new') }}" style="background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3);" class="quick-btn">
+            <i class="fas fa-user-plus"></i> Add Employee
+        </a>
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\LeaveRequestCrudController').setAction('index') }}" style="background:#fff; color:#5856d6;" class="quick-btn">
+            <i class="fas fa-calendar-check"></i> Leave Requests
+        </a>
+    </div>
+</div>
+
+{# ─── Stats Grid ─── #}
+<div class="adm-grid">
+    <div class="adm-card c-purple">
+        <i class="fas fa-users icon"></i>
+        <div class="label">Total Employees</div>
+        <div class="value">{{ total_employees }}</div>
+        <div class="sub">{{ active_employees }} active</div>
+    </div>
+    <div class="adm-card c-blue">
+        <i class="fas fa-user-circle icon"></i>
+        <div class="label">Total Users</div>
+        <div class="value">{{ total_users }}</div>
+        <div class="sub">System accounts</div>
+    </div>
+    <div class="adm-card c-green">
+        <i class="fas fa-building icon"></i>
+        <div class="label">Departments</div>
+        <div class="value">{{ total_departments }}</div>
+        <div class="sub">Active divisions</div>
+    </div>
+    <div class="adm-card c-indigo">
+        <i class="fas fa-diagram-project icon"></i>
+        <div class="label">Projects</div>
+        <div class="value">{{ total_projects }}</div>
+        <div class="sub">{{ total_tasks }} total tasks</div>
+    </div>
+    <div class="adm-card c-amber">
+        <i class="fas fa-calendar-xmark icon"></i>
+        <div class="label">Pending Leaves</div>
+        <div class="value">{{ pending_leaves }}</div>
+        <div class="sub">Awaiting approval</div>
+    </div>
+    <div class="adm-card c-teal">
+        <i class="fas fa-fingerprint icon"></i>
+        <div class="label">Today's Attendance</div>
+        <div class="value">{{ today_attendance }}</div>
+        <div class="sub">Checked in today</div>
+    </div>
+</div>
+
+{# ─── Two-column layout ─── #}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+
+    {# Pending Leaves Table #}
+    <div class="adm-section">
+        <div class="adm-section-header">
+            <h2><i class="fas fa-clock" style="color:#f59e0b;"></i> Pending Leave Requests</h2>
+            <a href="{{ ea_url().setController('App\\Controller\\Admin\\LeaveRequestCrudController').setAction('index') }}" style="font-size:0.8rem; color:#5856d6; text-decoration:none;">View all →</a>
+        </div>
+        <table class="adm-table">
+            <thead><tr>
+                <th>Employee</th>
+                <th>Type</th>
+                <th>Status</th>
+            </tr></thead>
+            <tbody>
+            {% for leave in recent_leaves %}
+                <tr>
+                    <td><strong>{{ leave.employee ? leave.employee.firstName ~ ' ' ~ leave.employee.lastName : 'N/A' }}</strong></td>
+                    <td>{{ leave.leaveType ?? 'Casual' }}</td>
+                    <td><span class="badge badge-warning">Pending</span></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="3" style="text-align:center; color:#9ca3af; padding:24px;">No pending leave requests</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# Recent Employees Table #}
+    <div class="adm-section">
+        <div class="adm-section-header">
+            <h2><i class="fas fa-user-check" style="color:#10b981;"></i> Recently Added Employees</h2>
+            <a href="{{ ea_url().setController('App\\Controller\\Admin\\EmployeeCrudController').setAction('index') }}" style="font-size:0.8rem; color:#5856d6; text-decoration:none;">View all →</a>
+        </div>
+        <table class="adm-table">
+            <thead><tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Status</th>
+            </tr></thead>
+            <tbody>
+            {% for emp in recent_employees %}
+                <tr>
+                    <td><strong>{{ emp.firstName }} {{ emp.lastName }}</strong></td>
+                    <td>{{ emp.department ? emp.department.name : 'N/A' }}</td>
+                    <td>
+                        {% if emp.status == 'Active' %}
+                            <span class="badge badge-success">Active</span>
+                        {% else %}
+                            <span class="badge badge-danger">{{ emp.status ?? 'N/A' }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="3" style="text-align:center; color:#9ca3af; padding:24px;">No employees found</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{# ─── Quick Actions ─── #}
+<div class="adm-section">
+    <div class="adm-section-header">
+        <h2><i class="fas fa-bolt" style="color:#f59e0b;"></i> Quick Actions</h2>
+    </div>
+    <div class="quick-grid">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\EmployeeCrudController').setAction('new') }}" class="quick-btn" style="background:#ede9fe; color:#5856d6;">
+            <i class="fas fa-user-plus"></i> New Employee
+        </a>
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\UserCrudController').setAction('index') }}" class="quick-btn" style="background:#dbeafe; color:#2563eb;">
+            <i class="fas fa-users-gear"></i> Manage Users
+        </a>
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\DepartmentCrudController').setAction('new') }}" class="quick-btn" style="background:#d1fae5; color:#065f46;">
+            <i class="fas fa-building-circle-arrow-right"></i> New Department
+        </a>
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ProjectCrudController').setAction('new') }}" class="quick-btn" style="background:#fef3c7; color:#92400e;">
+            <i class="fas fa-diagram-project"></i> New Project
+        </a>
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\SalaryCrudController').setAction('index') }}" class="quick-btn" style="background:#fee2e2; color:#991b1b;">
+            <i class="fas fa-money-bill-wave"></i> Manage Salaries
+        </a>
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\AnnouncementCrudController').setAction('new') }}" class="quick-btn" style="background:#f3e8ff; color:#7c3aed;">
+            <i class="fas fa-bullhorn"></i> New Announcement
+        </a>
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\HolidayCrudController').setAction('new') }}" class="quick-btn" style="background:#e0f2fe; color:#0369a1;">
+            <i class="fas fa-umbrella-beach"></i> Add Holiday
+        </a>
+    </div>
+</div>
+{% endblock %}
