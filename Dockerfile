@@ -19,6 +19,9 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
+# Ensure .env file exists so Symfony runtime never throws PathException
+RUN touch .env
+
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV APP_ENV=prod
 
@@ -27,4 +30,4 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 EXPOSE 8080
 
-CMD php -S 0.0.0.0:$PORT -t public public/index.php
+CMD php bin/console cache:clear && php -S 0.0.0.0:$PORT -t public public/index.php

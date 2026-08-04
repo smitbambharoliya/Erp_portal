@@ -5,7 +5,7 @@ NIXPACKS_PHP_EXTENSIONS = 'pdo,pdo_mysql,intl,ctype,iconv,mbstring,zip'
 cmds = ['composer install --no-dev --optimize-autoloader --no-scripts']
 
 [phases.build]
-cmds = ['php bin/console cache:clear']
+cmds = ['touch .env', 'php bin/console cache:clear']
 
 [start]
 cmd = 'php -S 0.0.0.0:$PORT -t public public/index.php'
