@@ -27,4 +27,4 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 EXPOSE 8080
 
-CMD php bin/console cache:clear && php -S 0.0.0.0:${PORT:-8080} -t public public/index.php
+CMD php -S 0.0.0.0:$PORT -t public public/index.php
