@@ -19,11 +19,13 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
-# Ensure all possible .env files exist so Dotenv never throws PathException
-RUN touch .env .env.local .env.dev .env.dev.local .env.prod .env.prod.local
+# Ensure all possible .env files exist and are readable by all users
+RUN touch .env .env.local .env.dev .env.dev.local .env.prod .env.prod.local \
+    && chmod 777 .env*
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV APP_ENV=prod
+ENV APP_RUNTIME_OPTIONS="disable_dotenv=1"
 
 # Run composer install with --no-scripts to prevent build-time database connection attempts
 RUN composer install --no-dev --optimize-autoloader --no-scripts
