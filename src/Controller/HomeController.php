@@ -10,9 +10,14 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class HomeController extends AbstractController
 {
+    #[Route('/', name: 'app_root')]
     #[Route('/home', name: 'app_home')]
     public function index(): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
         // Redirect HR and Admin users to HR Dashboard
         if ($this->isGranted('ROLE_HR') || $this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('app_hr_dashboard');
