@@ -183,8 +183,8 @@
                     {% for leave in leaveRequests %}
                         <tr style="border-bottom:1px solid #f1f5f9;">
                             <td style="padding:14px 20px;"><strong>{{ leave.leaveType ?? 'Casual Leave' }}</strong></td>
-                            <td style="padding:14px 20px;">{{ leave.startDate ?? '-' }}</td>
-                            <td style="padding:14px 20px;">{{ leave.endDate ?? '-' }}</td>
+                             <td style="padding:14px 20px;">{{ leave.startDate ? leave.startDate|date('Y-m-d') : '-' }}</td>
+                             <td style="padding:14px 20px;">{{ leave.endDate ? leave.endDate|date('Y-m-d') : '-' }}</td>
                             <td style="padding:14px 20px;">
                                 {% if leave.status == 'Approved' %}
                                     <span class="badge badge-success">Approved</span>

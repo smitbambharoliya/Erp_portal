@@ -86,8 +86,8 @@
                             </strong>
                         </td>
                         <td style="padding:14px 20px;"><span class="badge badge-info">{{ leave.leaveType ?? 'Casual Leave' }}</span></td>
-                        <td style="padding:14px 20px;">{{ leave.startDate ?? '-' }}</td>
-                        <td style="padding:14px 20px;">{{ leave.endDate ?? '-' }}</td>
+                        <td style="padding:14px 20px;">{{ leave.startDate ? leave.startDate|date('Y-m-d') : '-' }}</td>
+                        <td style="padding:14px 20px;">{{ leave.endDate ? leave.endDate|date('Y-m-d') : '-' }}</td>
                         <td style="padding:14px 20px;"><span class="badge badge-warning">Pending</span></td>
                         <td style="padding:14px 20px; text-align:center;">
                             <a href="{{ path('app_leave_request_approve', {'id': leave.id}) }}" class="btn btn-sm btn-success" style="border-radius:6px; margin-right:4px;">
