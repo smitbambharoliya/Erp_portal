@@ -97,7 +97,7 @@
             "require": "7.4.*"
         },
         "runtime": {
-            "disable_dotenv": true
+            "disable_dotenv": false
         }
     },
     "require-dev": {
