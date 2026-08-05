@@ -3,8 +3,6 @@
 namespace App\Form;
 
 use App\Entity\LeaveRequest;
-use App\Entity\Employee;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -17,20 +15,28 @@ class LeaveRequestType extends AbstractType
     {
         $builder
             ->add('leaveType', TextType::class, [
-                'attr' => [
+                'label' => 'write the reason for the leave',
+                'attr' => [ 
                     'class' => 'form-control',
                 ],
+                'invalid_message' => 'Please write the reason for the leave',
             ])
             ->add('startDate', DateType::class, [
+                'label' => 'select start date',
                 'widget' => 'single_text',
+                'input' => 'datetime_immutable',
+                'invalid_message' => 'Please select a valid start date',
                 'attr' => [
-                    'class' => 'form-control',
+                    'class' => 'js-datepicker',
                 ],
             ])
             ->add('endDate', DateType::class, [
+                'label' => 'select end date',
                 'widget' => 'single_text',
+                'input' => 'datetime_immutable',
+                'invalid_message' => 'Please select a valid end date',
                 'attr' => [
-                    'class' => 'form-control',
+                    'class' => 'js-datepicker',
                 ],
             ])
         ;

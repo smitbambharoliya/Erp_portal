@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\LeaveRequestRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LeaveRequestRepository::class)]
@@ -23,10 +21,10 @@ class LeaveRequest
     #[ORM\Column(length: 255)]
     private ?string $leaveType = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'datetime')]
     private ?string $startDate = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'datetime')]
     private ?string $endDate = null;
 
     #[ORM\Column(length: 255)]
@@ -67,24 +65,24 @@ class LeaveRequest
         return $this;
     }
 
-    public function getStartDate(): ?string
+    public function getStartDate(): ?\DateTimeImmutable
     {
         return $this->startDate;
     }
 
-    public function setStartDate(string $startDate): static
+    public function setStartDate(?\DateTimeImmutable $startDate): static
     {
         $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?string
+    public function getEndDate(): ?\DateTimeImmutable
     {
         return $this->endDate;
     }
 
-    public function setEndDate(string $endDate): static
+    public function setEndDate(?\DateTimeImmutable $endDate): static
     {
         $this->endDate = $endDate;
 
