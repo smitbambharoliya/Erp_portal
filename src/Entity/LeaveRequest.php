@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\LeaveRequestRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LeaveRequestRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -19,12 +22,16 @@ class LeaveRequest
     private ?Employee $employee = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Please write the reason for the leave.')]
     private ?string $leaveType = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Assert\NotBlank(message: 'Please select a start date.')]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Assert\NotBlank(message: 'Please select an end date.')]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'startDate', message: 'End date must be on or after start date.')]
     private ?\DateTimeImmutable $endDate = null;
 
     #[ORM\Column(length: 255)]
@@ -118,9 +125,9 @@ class LeaveRequest
         return $this->createdAt;
     }
     #[ORM\PrePersist]
-    public function setCreatedAt(): static
+    public function setCreatedAt(?\DateTimeImmutable $createdAt = null): static
     {
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = $createdAt ?? new \DateTimeImmutable();
 
         return $this;
     }
