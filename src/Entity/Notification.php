@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\NotificationRepository;
+use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,11 +16,9 @@ class Notification
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'notification')]
-    private Collection $user;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'notifications')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -35,7 +34,6 @@ class Notification
 
     public function __construct()
     {
-        $this->user = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -43,32 +41,14 @@ class Notification
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUser(): Collection
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function addUser(User $user): static
+    public function setUser(?User $user): static
     {
-        if (!$this->user->contains($user)) {
-            $this->user->add($user);
-            $user->setNotification($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->user->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getNotification() === $this) {
-                $user->setNotification(null);
-            }
-        }
+        $this->user = $user;
 
         return $this;
     }

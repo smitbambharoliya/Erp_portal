@@ -6,6 +6,8 @@ use App\Entity\Task;
 use App\Entity\User;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +40,7 @@ final class TaskController extends AbstractController
     #[Route('/new', name: 'app_task_new', methods: ['GET', 'POST'])]
     public function new(Request $request, 
     EntityManagerInterface $entityManager,
-
+    NotificationService $notificationService
     ): Response
     {
         $task = new Task();
@@ -53,6 +55,14 @@ final class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($task);
             $entityManager->flush();
+
+            foreach ($task->getEmployee() as $emp) {
+                $userAssigned = $emp->getUser();
+                if ($userAssigned) {
+                    $notificationService->notify($userAssigned, 'New Task Assigned', 'You have been assigned: ' . $task->getTitle());
+                }
+            }
+
             $this->addFlash('success', 'Task created successfully!');
 
             return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
@@ -77,13 +87,32 @@ final class TaskController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_task_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Task $task, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Task $task, EntityManagerInterface $entityManager, NotificationService $notificationService, UserRepository $userRepository): Response
     {
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $isCompleted = strtolower((string)$task->getStatus()) === 'completed' || strtolower((string)$task->getStatus()) === 'done';
+
             $entityManager->flush();
+
+            if ($isCompleted) {
+                $hrs = $userRepository->findAll();
+                foreach ($hrs as $hr) {
+                    if (in_array('ROLE_HR', $hr->getRoles(), true) || in_array('ROLE_ADMIN', $hr->getRoles(), true)) {
+                        $notificationService->notify($hr, 'Task Completed', 'Task has been completed: ' . $task->getTitle());
+                    }
+                }
+            } else {
+                foreach ($task->getEmployee() as $emp) {
+                    $userAssigned = $emp->getUser();
+                    if ($userAssigned) {
+                        $notificationService->notify($userAssigned, 'Task Updated/Assigned', 'Task has been updated: ' . $task->getTitle());
+                    }
+                }
+            }
+
             $this->addFlash('success', 'Task updated successfully!');
 
             return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);

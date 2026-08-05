@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\LeaveRequestType;
 use App\Repository\LeaveRequestRepository;
 use App\Service\LeaveRequestService;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -108,10 +109,16 @@ final class LeaveRequestController extends AbstractController
     #[Route('/{id}/approve',name:'app_leave_request_approve')]
     public function approve(
         LeaveRequestService $leaveRequestService,
-        LeaveRequest $leaveRequest
+        LeaveRequest $leaveRequest,
+        NotificationService $notificationService
     ): Response
     {
         $leaveRequestService->approve($leaveRequest);
+
+        $user = $leaveRequest->getEmployee()?->getUser();
+        if ($user) {
+            $notificationService->notify($user, 'Leave Request Approved', 'Your leave request has been approved by HR.');
+        }
 
         $this->addFlash('success', 'Leave request approved successfully!');
         
@@ -121,10 +128,16 @@ final class LeaveRequestController extends AbstractController
     #[Route('/{id}/reject',name:'app_leave_request_reject')]
     public function reject(
         LeaveRequestService $leaveRequestService,
-        LeaveRequest $leaveRequest
+        LeaveRequest $leaveRequest,
+        NotificationService $notificationService
     ): Response
     {
         $leaveRequestService->reject($leaveRequest);
+
+        $user = $leaveRequest->getEmployee()?->getUser();
+        if ($user) {
+            $notificationService->notify($user, 'Leave Request Rejected', 'Your leave request has been rejected by HR.');
+        }
 
         $this->addFlash('success', 'Leave request rejected successfully!');
         

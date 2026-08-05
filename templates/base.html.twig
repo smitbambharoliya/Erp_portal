@@ -265,6 +265,101 @@
                 display: flex; align-items: center; justify-content: space-between;
                 margin-top: auto;
             }
+
+            /* Notifications Dropdown */
+            .notification-dropdown-container {
+                position: relative;
+                display: inline-block;
+            }
+            .notification-badge {
+                position: absolute;
+                top: -2px;
+                right: -2px;
+                background-color: var(--danger);
+                color: white;
+                font-size: 0.65rem;
+                font-weight: 800;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid white;
+            }
+            .notification-dropdown {
+                position: absolute;
+                right: 0;
+                top: 45px;
+                width: 320px;
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                z-index: 1000;
+                overflow: hidden;
+            }
+            .notification-dropdown-header {
+                padding: 12px 16px;
+                background: #f8f9fa;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: var(--text-main);
+            }
+            .mark-all-read-btn {
+                background: none;
+                border: none;
+                color: var(--primary);
+                font-size: 0.75rem;
+                font-weight: 600;
+                cursor: pointer;
+                padding: 0;
+            }
+            .mark-all-read-btn:hover {
+                text-decoration: underline;
+            }
+            .notification-dropdown-list {
+                max-height: 280px;
+                overflow-y: auto;
+            }
+            .notification-item {
+                padding: 12px 16px;
+                border-bottom: 1px solid #f3f4f7;
+                font-size: 0.8rem;
+                cursor: pointer;
+                transition: background-color 0.15s;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                text-align: left;
+            }
+            .notification-item:hover {
+                background-color: #f8f9fa;
+            }
+            .notification-item-title {
+                font-weight: 700;
+                color: var(--text-main);
+            }
+            .notification-item-msg {
+                color: var(--text-mute);
+                line-height: 1.3;
+            }
+            .notification-item-time {
+                font-size: 0.7rem;
+                color: #a1a8b3;
+                align-self: flex-end;
+            }
+            .notification-empty, .notification-loading {
+                padding: 24px;
+                text-align: center;
+                color: var(--text-mute);
+                font-size: 0.8rem;
+            }
         </style>
         {% block stylesheets %}{% endblock %}
     </head>
@@ -352,7 +447,21 @@
                     </div>
                     <div class="header-actions">
                         <a href="{{ path('app_employee_index') }}" class="header-icon-btn" title="Employees"><i class="fa-solid fa-users"></i></a>
-                        <a href="{{ path('app_attendance_index') }}" class="header-icon-btn" title="Attendance"><i class="fa-solid fa-bell"></i></a>
+                        <div class="notification-dropdown-container">
+                            <button class="header-icon-btn" id="notificationTrigger" title="Notifications" style="background:none; border:none; cursor:pointer;">
+                                <i class="fa-solid fa-bell"></i>
+                                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                            </button>
+                            <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+                                <div class="notification-dropdown-header">
+                                    <span>Notifications</span>
+                                    <button id="markAllReadBtn" class="mark-all-read-btn">Mark all read</button>
+                                </div>
+                                <div class="notification-dropdown-list" id="notificationList">
+                                    <div class="notification-loading">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
                         <a href="{{ path('app_logout') }}" class="logout-link">
                             <i class="fa-solid fa-right-from-bracket"></i> Logout
                         </a>
@@ -383,5 +492,126 @@
         </div>
 
         {% block javascripts %}{% endblock %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const trigger = document.getElementById('notificationTrigger');
+                const dropdown = document.getElementById('notificationDropdown');
+                const badge = document.getElementById('notificationBadge');
+                const list = document.getElementById('notificationList');
+                const markAllBtn = document.getElementById('markAllReadBtn');
+
+                if (!trigger || !dropdown) return;
+
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isHidden = dropdown.style.display === 'none';
+                    dropdown.style.display = isHidden ? 'block' : 'none';
+                    if (isHidden) {
+                        fetchNotifications();
+                    }
+                });
+
+                document.addEventListener('click', function() {
+                    dropdown.style.display = 'none';
+                });
+
+                dropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+
+                function fetchNotifications() {
+                    fetch('{{ path("app_notifications_unread_api") }}')
+                        .then(res => res.json())
+                        .then(data => {
+                            updateBadge(data.length);
+                            if (data.length === 0) {
+                                list.innerHTML = '<div class="notification-empty"><i class="fa-regular fa-bell-slash" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: #ccc;"></i>No new notifications</div>';
+                                return;
+                            }
+                            list.innerHTML = '';
+                            data.forEach(item => {
+                                const el = document.createElement('div');
+                                el.className = 'notification-item';
+                                el.innerHTML = `
+                                    <div class="notification-item-title">${escapeHtml(item.title)}</div>
+                                    <div class="notification-item-msg">${escapeHtml(item.message)}</div>
+                                    <div class="notification-item-time">${item.createdAt}</div>
+                                `;
+                                el.addEventListener('click', function() {
+                                    markAsRead(item.id, el);
+                                });
+                                list.appendChild(el);
+                            });
+                        });
+                }
+
+                function updateBadge(count) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+
+                function markAsRead(id, element) {
+                    fetch(`/notifications/${id}/read`, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            element.style.opacity = '0.5';
+                            setTimeout(() => {
+                                element.remove();
+                                fetchNotifications();
+                            }, 300);
+                        }
+                    });
+                }
+
+                if (markAllBtn) {
+                    markAllBtn.addEventListener('click', function() {
+                        fetch('{{ path("app_notifications_mark_all_read") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                fetchNotifications();
+                            }
+                        });
+                    });
+                }
+
+                function escapeHtml(text) {
+                    return text
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                }
+
+                function checkBadgeCount() {
+                    fetch('{{ path("app_notifications_unread_api") }}')
+                        .then(res => res.json())
+                        .then(data => {
+                            updateBadge(data.length);
+                        })
+                        .catch(() => {});
+                }
+                checkBadgeCount();
+                setInterval(checkBadgeCount, 30000);
+            });
+        </script>
     </body>
 </html>

@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Event\AttendanceCheckedOutEvent;
 use App\Form\AttendanceType;
 use App\Repository\AttendanceRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -163,13 +164,19 @@ final class AttendanceController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_attendance_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function edit(Request $request, Attendance $attendance, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Attendance $attendance, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
         $form = $this->createForm(AttendanceType::class, $attendance);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            $user = $attendance->getEmployee()?->getUser();
+            if ($user) {
+                $notificationService->notify($user, 'Attendance Updated', 'Your attendance record for ' . $attendance->getDate() . ' has been updated.');
+            }
+
             $this->addFlash('success', 'Attendance record updated!');
 
             return $this->redirectToRoute('app_attendance_index', [], Response::HTTP_SEE_OTHER);

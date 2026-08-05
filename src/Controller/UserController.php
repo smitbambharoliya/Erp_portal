@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -35,7 +36,8 @@ final class UserController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        NotificationService $notificationService
     ): Response {
         $user = new User();
         $form = $this->createForm(UserType::class, $user, ['is_edit' => false]);
@@ -77,6 +79,7 @@ final class UserController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
+            $notificationService->notify($user, 'Welcome Account Created', 'Your new ERP Portal user account is ready to use.');
 
             $this->addFlash('success', 'User account created successfully.');
 

@@ -7,6 +7,7 @@ use App\Entity\Salary;
 use App\Entity\User;
 use App\Form\EmployeeType;
 use App\Repository\EmployeeRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,8 @@ final class EmployeeController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $userPasswordHasher
+        UserPasswordHasherInterface $userPasswordHasher,
+        NotificationService $notificationService
     ): Response
     {
         $employee = new Employee();
@@ -94,6 +96,7 @@ final class EmployeeController extends AbstractController
             }
 
             $entityManager->flush();
+            $notificationService->notify($user, 'Welcome to the Team!', 'Welcome to our company! Your employee portal account has been created.');
             $this->addFlash('success', 'Employee profile, User account & Salary setup created successfully!');
 
             return $this->redirectToRoute('app_employee_index', [], Response::HTTP_SEE_OTHER);

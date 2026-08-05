@@ -6,6 +6,7 @@ use App\Entity\Salary;
 use App\Entity\User;
 use App\Form\SalaryType;
 use App\Repository\SalaryRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,7 @@ final class SalaryController extends AbstractController
 
     #[IsGranted('ROLE_HR')]
     #[Route('/new', name: 'app_salary_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
         $salary = new Salary();
         $form = $this->createForm(SalaryType::class, $salary);
@@ -45,6 +46,12 @@ final class SalaryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($salary);
             $entityManager->flush();
+
+            $userAssigned = $salary->getEmployee()?->getUser();
+            if ($userAssigned) {
+                $notificationService->notify($userAssigned, 'Payslip Generated', 'Your salary slip for ' . $salary->getMonth() . '/' . $salary->getYear() . ' has been generated.');
+            }
+
             $this->addFlash('success', 'Salary record created successfully!');
 
             return $this->redirectToRoute('app_salary_index', [], Response::HTTP_SEE_OTHER);
@@ -79,13 +86,19 @@ final class SalaryController extends AbstractController
 
     #[IsGranted('ROLE_HR')]
     #[Route('/{id}/edit', name: 'app_salary_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function edit(Request $request, Salary $salary, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Salary $salary, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
         $form = $this->createForm(SalaryType::class, $salary);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            $userAssigned = $salary->getEmployee()?->getUser();
+            if ($userAssigned) {
+                $notificationService->notify($userAssigned, 'Payslip Updated', 'Your salary slip for ' . $salary->getMonth() . '/' . $salary->getYear() . ' has been updated.');
+            }
+
             $this->addFlash('success', 'Salary record updated successfully!');
 
             return $this->redirectToRoute('app_salary_index', [], Response::HTTP_SEE_OTHER);
