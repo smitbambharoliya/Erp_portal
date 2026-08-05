@@ -124,11 +124,18 @@ class LeaveRequest
     {
         return $this->createdAt;
     }
-    #[ORM\PrePersist]
-    public function setCreatedAt(?\DateTimeImmutable $createdAt = null): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createdAt = $createdAt ?? new \DateTimeImmutable();
+        $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
     }
 }
