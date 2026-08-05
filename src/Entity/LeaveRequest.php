@@ -21,11 +21,11 @@ class LeaveRequest
     #[ORM\Column(length: 255)]
     private ?string $leaveType = null;
 
-    #[ORM\Column(type: 'datetime')]
-    private ?string $startDate = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $startDate = null;
 
-    #[ORM\Column(type: 'datetime')]
-    private ?string $endDate = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $endDate = null;
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
