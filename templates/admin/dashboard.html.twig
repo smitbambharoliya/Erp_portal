@@ -3,7 +3,12 @@
 {% block page_title %}Admin Dashboard{% endblock %}
 
 {% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+    /* Fix inline SVG explosion if asset CSS is delayed or missing */
+    svg { max-width: 24px; max-height: 24px; vertical-align: middle; }
+    .ea-icon, .sidebar-menu-icon svg { width: 18px !important; height: 18px !important; }
+    
     .adm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .adm-card {
         border-radius: 12px; padding: 20px; color: #fff;
